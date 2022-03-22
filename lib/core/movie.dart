@@ -17,11 +17,16 @@ class Movie {
         __description = description!,
         __rating = rating!;
 
-  factory Movie.fromJSON(Map<String, dynamic> json) {
-    return Movie(
-        title: json['title'] as String, image: json['title'] as String);
-  }
+  factory Movie.fromJSON(Map<String, dynamic> json) => Movie(
+      title: json['title'] as String,
+      image: json['title'] as String,
+      pv: json['pv'] as String,
+      description: json['description'] as String,
+      rating: json['rating'] as double);
 
   String getTitle() => __title;
   String getImage() => __image;
+  String getPV() => __pv;
+  String getDescription() => __description;
+  double getRating() => __rating;
 }
