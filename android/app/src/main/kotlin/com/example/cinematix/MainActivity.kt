@@ -1,4 +1,4 @@
-package com.example.cinematix
+package com.afive.cinematix
 
 import io.flutter.embedding.android.FlutterActivity
 
