@@ -1,3 +1,4 @@
+import 'package:cinematix/page/register.dart';
 import 'package:flutter/material.dart';
 
 import '../widget/cinematix_container.dart';
@@ -7,12 +8,20 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CinematixContainer(
+    return Scaffold(
+        body: CinematixContainer(
       bottomChild: [
         SizedBox(
           width: 200,
           child: ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) {
+                  return RegisterPage();
+                }),
+              );
+            },
             child: Text("Register"),
           ),
         ),
@@ -40,6 +49,6 @@ class LoginPage extends StatelessWidget {
           ),
         )
       ],
-    );
+    ));
   }
 }

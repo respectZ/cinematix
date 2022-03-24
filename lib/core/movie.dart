@@ -6,19 +6,19 @@ class Movie {
   final String __rating;
   final int __happiness;
   final int __lenght;
-  final Date __start_airing;
-  final Date __end_airing;
+  final DateTime __start_airing;
+  final DateTime __end_airing;
 
   Movie(
       {required String title,
       required String image,
       String? pv,
       String? description,
-      String? rating, 
+      String? rating,
       int? happiness,
       int? lenght,
-      Date? start_airing,
-      Date? end_airing})
+      DateTime? start_airing,
+      DateTime? end_airing})
       : __title = title,
         __image = image,
         __pv = pv!,
@@ -36,9 +36,9 @@ class Movie {
       description: json['description'] as String,
       rating: json['rating'] as String,
       happiness: json['happiness'] as int,
-      lenght: json['length'] as int
-      start_airing: json['start_airing'] as Date,
-      end_airing: json['end_airing'] as Date);
+      lenght: json['length'] as int,
+      start_airing: json['start_airing'] as DateTime,
+      end_airing: json['end_airing'] as DateTime);
 
   String getTitle() => __title;
   String getImage() => __image;
@@ -47,6 +47,6 @@ class Movie {
   String getRating() => __rating;
   int getHappiness() => __happiness;
   int getLenght() => __lenght;
-  Date getStart_airing() => __start_airing;
-  Date getEnd_airing() => __end_airing;
+  DateTime getStart_airing() => __start_airing;
+  DateTime getEnd_airing() => __end_airing;
 }
