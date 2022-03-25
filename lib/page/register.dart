@@ -53,8 +53,7 @@ class RegisterPage extends StatelessWidget {
           width: 200,
           child: ElevatedButton(
             onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => LoginPage()));
+              Navigator.pop(context);
             },
             child: const Text("Login"),
           ),

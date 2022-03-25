@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import '../widget/cinematix_container.dart';
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  LoginPage({Key? key}) : super(key: key);
+
+  TextEditingController usernameController = new TextEditingController();
+  TextEditingController passwordController = new TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +32,7 @@ class LoginPage extends StatelessWidget {
       ],
       formChild: [
         TextField(
+          controller: usernameController,
           decoration: InputDecoration(
             hintText: 'username',
           ),
@@ -37,6 +41,7 @@ class LoginPage extends StatelessWidget {
           obscureText: true,
           autocorrect: false,
           enableSuggestions: false,
+          controller: passwordController,
           decoration: InputDecoration(
             hintText: 'password',
           ),
@@ -44,7 +49,44 @@ class LoginPage extends StatelessWidget {
         SizedBox(
           width: 200,
           child: ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              if (usernameController.text.isNotEmpty &&
+                  passwordController.text.isNotEmpty) {
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return const AlertDialog(
+                        content: Text("To do."),
+                      );
+                    });
+              } else if (usernameController.text.isNotEmpty &&
+                  passwordController.text.isEmpty) {
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        content: const Text("Password Kosong."),
+                      );
+                    });
+              } else if (usernameController.text.isEmpty &&
+                  passwordController.text.isNotEmpty) {
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        content: const Text("Username Kosong."),
+                      );
+                    });
+              } else {
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        content: const Text("Username & Password Kosong."),
+                      );
+                    });
+              }
+            },
             child: Text("Login"),
           ),
         )
