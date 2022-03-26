@@ -15,21 +15,25 @@ class RegisterPage extends StatelessWidget {
         TextField(
           decoration: InputDecoration(
             hintText: 'username',
+            prefixIcon: Icon(Icons.person),
           ),
         ),
         TextField(
           decoration: InputDecoration(
             hintText: 'nama lengkap',
+            prefixIcon: Icon(Icons.person),
           ),
         ),
         TextField(
           decoration: InputDecoration(
             hintText: 'email',
+            prefixIcon: Icon(Icons.email),
           ),
         ),
         TextField(
           decoration: InputDecoration(
             hintText: 'no hp',
+            prefixIcon: Icon(Icons.phone),
           ),
         ),
         TextField(
@@ -38,6 +42,7 @@ class RegisterPage extends StatelessWidget {
           enableSuggestions: false,
           decoration: InputDecoration(
             hintText: 'password',
+            prefixIcon: Icon(Icons.key),
           ),
         ),
         SizedBox(

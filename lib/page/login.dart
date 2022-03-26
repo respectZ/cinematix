@@ -6,8 +6,8 @@ import '../widget/cinematix_container.dart';
 class LoginPage extends StatelessWidget {
   LoginPage({Key? key}) : super(key: key);
 
-  TextEditingController usernameController = new TextEditingController();
-  TextEditingController passwordController = new TextEditingController();
+  TextEditingController usernameController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +35,7 @@ class LoginPage extends StatelessWidget {
           controller: usernameController,
           decoration: InputDecoration(
             hintText: 'username',
+            prefixIcon: Icon(Icons.person),
           ),
         ),
         TextField(
@@ -44,6 +45,7 @@ class LoginPage extends StatelessWidget {
           controller: passwordController,
           decoration: InputDecoration(
             hintText: 'password',
+            prefixIcon: Icon(Icons.key),
           ),
         ),
         SizedBox(
