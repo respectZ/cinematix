@@ -1,3 +1,4 @@
+import 'package:cinematix/page/main_menu/main_menu.dart';
 import 'package:cinematix/page/register.dart';
 import 'package:flutter/material.dart';
 
@@ -54,13 +55,15 @@ class LoginPage extends StatelessWidget {
             onPressed: () {
               if (usernameController.text.isNotEmpty &&
                   passwordController.text.isNotEmpty) {
-                showDialog(
-                    context: context,
-                    builder: (context) {
-                      return const AlertDialog(
-                        content: Text("To do."),
-                      );
-                    });
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => MainMenu()));
+                // showDialog(
+                //     context: context,
+                //     builder: (context) {
+                //       return const AlertDialog(
+                //         content: Text("To do."),
+                //       );
+                //     });
               } else if (usernameController.text.isNotEmpty &&
                   passwordController.text.isEmpty) {
                 showDialog(

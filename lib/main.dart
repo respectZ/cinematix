@@ -1,5 +1,7 @@
 import 'package:cinematix/page/login.dart';
+import 'package:cinematix/page/main_menu/main_menu.dart';
 import 'package:cinematix/page/register.dart';
+import 'package:cinematix/widget/cinematix_home.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
