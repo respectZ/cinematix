@@ -25,6 +25,7 @@ class App extends StatelessWidget {
       title: 'CINEMATIX',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        fontFamily: 'Rubik',
       ),
       home: const MainApp(),
     );

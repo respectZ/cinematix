@@ -54,6 +54,27 @@ dev_dependencies:
 
 # The following section is specific to Flutter.
 flutter:
+  fonts:
+    - family: Rubik
+      fonts:
+        - asset: fonts/Rubik-Regular.ttf
+        - asset: fonts/Rubik-Italic.ttf
+          style: italic
+        - asset: fonts/Rubik-Light.ttf
+          weight: 100
+        - asset: fonts/Rubik-LightItalic.ttf
+          weight: 100
+          style: italic
+        - asset: fonts/Rubik-Medium.ttf
+          weight: 300
+        - asset: fonts/Rubik-MediumItalic.ttf
+          weight: 300
+          style: italic
+        - asset: fonts/Rubik-Bold.ttf
+          weight: 700
+        - asset: fonts/Rubik-Bold.ttf
+          weight: 700
+          style: italic
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
