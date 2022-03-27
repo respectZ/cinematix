@@ -1,5 +1,5 @@
 import '../../widget/cinematix_bar.dart';
-import '../../widget/review.dart';
+import '../../widget/reviewbox.dart';
 
 import 'dart:developer';
 
@@ -45,7 +45,9 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
         ),
         centerTitle: false,
         leading: IconButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pop(context);
+          },
           icon: Icon(
             Icons.arrow_back,
             color: Colors.black45,
@@ -265,6 +267,53 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
             // Review
             SizedBox(
               height: 12,
+            ),
+            Container(
+              margin: EdgeInsets.fromLTRB(12.0, 0.0, 0.0, 0.0),
+              width: screenWidth - 24,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Rating & Review",
+                    style: TitleStyle,
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.create_rounded,
+                        color: Colors.blue,
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text("Tulis Review")
+                    ],
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  ReviewBox(
+                    time: DateTime.now(),
+                    comment: "Hebat",
+                    star: 4.5,
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  ReviewBox(
+                    photoProfile: NetworkImage(
+                        "https://yt3.ggpht.com/-IdVo-vK7pr0VRjJDdza1-t1Edjce1Rd1R1hon_3SRIzuQ-XVBTWOJj-UfwYPp8y40KM197_y4o=s900-c-k-c0x00ffffff-no-rj"),
+                    name: "Zeta",
+                    time: DateTime.now(),
+                    comment: "Tidak Hebats",
+                    star: 1,
+                  ),
+                ],
+              ),
             ),
           ],
         ),
