@@ -1,4 +1,7 @@
 import '../../widget/cinematix_bar.dart';
+import '../../widget/review.dart';
+
+import 'dart:developer';
 
 import '../../core/movie.dart';
 
@@ -21,6 +24,16 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
+
+    // Configuration
+    final thumbnailWidth = screenHeight * 0.1586; // was 180
+    final thumbnailHeight = screenHeight * 0.26; // was 111
+    final titleWidth = screenWidth - thumbnailWidth - 24 - 10; // was 250
+    final infoWidth = screenWidth - titleWidth + 32; // was 70
+
+    log("Width " + screenWidth.toString());
+    log("Height " + screenHeight.toString());
+    log(infoWidth.toString());
 
     return Scaffold(
       appBar: AppBar(
@@ -82,8 +95,8 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                           // Thumbnail
                           Container(
                             margin: EdgeInsets.fromLTRB(12.0, 0.0, 12.0, 0.0),
-                            height: 180,
-                            width: 111,
+                            height: thumbnailHeight,
+                            width: thumbnailWidth,
                             decoration: BoxDecoration(
                               image: DecorationImage(
                                 fit: BoxFit.cover,
@@ -102,7 +115,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                                 height: 30,
                               ),
                               SizedBox(
-                                width: 250,
+                                width: titleWidth,
                                 child: Text(
                                   "Sword Art Online: Progressive Movie - Kuraki Yuuyami no Scherzo",
                                   style: TitleStyle,
@@ -119,7 +132,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                                     width: 50,
                                   ),
                                   SizedBox(
-                                    width: 170,
+                                    width: infoWidth,
                                     child: Text("Unknown"),
                                   ),
                                 ],
@@ -135,7 +148,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                                     width: 50,
                                   ),
                                   SizedBox(
-                                    width: 170,
+                                    width: infoWidth,
                                     child: Text("None"),
                                   ),
                                 ],
@@ -151,7 +164,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                                     width: 29,
                                   ),
                                   SizedBox(
-                                    width: 170,
+                                    width: infoWidth,
                                     child: Text("Unknown"),
                                   ),
                                 ],
@@ -167,7 +180,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                                     width: 53,
                                   ),
                                   SizedBox(
-                                    width: 170,
+                                    width: infoWidth,
                                     child: Text(
                                         "Action, Adventure, Fantasy, Romance"),
                                   ),
@@ -185,33 +198,46 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
             // Date
             Container(
               margin: EdgeInsets.fromLTRB(12.0, 12.0, 0.0, 0.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Stack(
                 children: [
-                  Row(
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(Icons.date_range_outlined),
-                      SizedBox(
-                        width: 5,
+                      Row(
+                        children: [
+                          Icon(Icons.date_range_outlined),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Text("10/03/2022 - 23/03/2022"),
+                        ],
                       ),
-                      Text("10/03/2022 - 23/03/2022"),
-                      Align(
-                          alignment: Alignment.centerRight,
-                          child: Icon(Icons.favorite)),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Container(
+                        padding: EdgeInsets.all(5.0),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                          color: Colors.blue,
+                        ),
+                        child: Text(
+                          "Currently Airing",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
                     ],
                   ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Container(
-                    padding: EdgeInsets.all(5.0),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                      color: Colors.blue,
-                    ),
-                    child: Text(
-                      "Currently Airing",
-                      style: TextStyle(color: Colors.white),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Container(
+                      margin: EdgeInsets.fromLTRB(0.0, 4.0, 12.0, 0.0),
+                      child: IconButton(
+                        iconSize: 48.0,
+                        padding: EdgeInsets.zero,
+                        onPressed: (() {}),
+                        icon: Icon(Icons.favorite),
+                      ),
                     ),
                   ),
                 ],
@@ -239,10 +265,13 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
             // Review
             SizedBox(
               height: 12,
-            )
+            ),
           ],
         ),
       ),
+      bottomNavigationBar: Container(
+          height: 45,
+          child: ElevatedButton(onPressed: (() {}), child: Text("Beli Tiket"))),
     );
   }
 }
