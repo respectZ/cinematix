@@ -1,4 +1,3 @@
-import '../../widget/cinematix_bar.dart';
 import '../../widget/reviewbox.dart';
 
 import 'dart:developer';
@@ -19,6 +18,13 @@ class MovieDetailPage extends StatefulWidget {
 class _MovieDetailPageState extends State<MovieDetailPage> {
   TextStyle TitleStyle =
       TextStyle(color: Colors.black, fontWeight: FontWeight.bold);
+  // some variables ?
+  bool isFavorite = true;
+
+  @override
+  void setState(VoidCallback fn) {
+    super.setState(fn);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,9 +37,9 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     final titleWidth = screenWidth - thumbnailWidth - 24 - 10; // was 250
     final infoWidth = screenWidth - titleWidth + 32; // was 70
 
-    log("Width " + screenWidth.toString());
-    log("Height " + screenHeight.toString());
-    log(infoWidth.toString());
+    // log("Width " + screenWidth.toString());
+    // log("Height " + screenHeight.toString());
+    // log(infoWidth.toString());
 
     return Scaffold(
       appBar: AppBar(
@@ -129,7 +135,10 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text("Durasi"),
+                                  Text(
+                                    "Durasi",
+                                    style: TitleStyle,
+                                  ),
                                   SizedBox(
                                     width: 50,
                                   ),
@@ -145,7 +154,10 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text("Rating"),
+                                  Text(
+                                    "Rating",
+                                    style: TitleStyle,
+                                  ),
                                   SizedBox(
                                     width: 50,
                                   ),
@@ -161,9 +173,12 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text("Sutradara"),
+                                  Text(
+                                    "Sutradara",
+                                    style: TitleStyle,
+                                  ),
                                   SizedBox(
-                                    width: 29,
+                                    width: 25,
                                   ),
                                   SizedBox(
                                     width: infoWidth,
@@ -177,7 +192,10 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text("Genre"),
+                                  Text(
+                                    "Genre",
+                                    style: TitleStyle,
+                                  ),
                                   SizedBox(
                                     width: 53,
                                   ),
@@ -237,8 +255,24 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                       child: IconButton(
                         iconSize: 48.0,
                         padding: EdgeInsets.zero,
-                        onPressed: (() {}),
-                        icon: Icon(Icons.favorite),
+                        icon: Icon(
+                          isFavorite
+                              ? Icons.favorite_rounded
+                              : Icons.favorite_border_rounded,
+                          color: Colors.blue,
+                        ),
+                        onPressed: (() {
+                          // isFavorite = !isFavorite;
+                          setState(() {
+                            isFavorite = !isFavorite;
+                          });
+                          final _snackBar = SnackBar(
+                            content: Text(isFavorite
+                                ? "Telah ditambahkan ke favorit"
+                                : "Telah dihapus dari favorit"),
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(_snackBar);
+                        }),
                       ),
                     ),
                   ),
@@ -292,6 +326,9 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                       ),
                       Text("Tulis Review")
                     ],
+                  ),
+                  Divider(
+                    thickness: 2.0,
                   ),
                   SizedBox(
                     height: 10,
