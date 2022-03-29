@@ -15,11 +15,114 @@ class MovieDetailPage extends StatefulWidget {
   State<MovieDetailPage> createState() => _MovieDetailPageState();
 }
 
-class _MovieDetailPageState extends State<MovieDetailPage> {
+class _MovieDetailPageState extends State<MovieDetailPage>
+    with SingleTickerProviderStateMixin {
   TextStyle TitleStyle =
       TextStyle(color: Colors.black, fontWeight: FontWeight.bold);
   // some variables ?
   bool isFavorite = true;
+  late TabController _tabController;
+  int _tabIndex = 0;
+
+  // Function util
+  void _tabSection() {
+    if (_tabController.indexIsChanging) {
+      setState(() {
+        _tabIndex = _tabController.index;
+        log(_tabIndex.toString());
+      });
+    }
+  }
+
+  // Function widget
+  List<Widget> _tabContent() {
+    return <Widget>[
+      Column(
+        children: [
+          Column(
+            children: [
+              Container(
+                margin: EdgeInsets.fromLTRB(12.0, 12.0, 0.0, 0.0),
+                color: Colors.white,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Sinopsis",
+                      style: TitleStyle,
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text("Second Sword Art Online: Progressive movie."),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+      Column(
+        children: [
+          SizedBox(
+            height: 12,
+          ),
+          Container(
+            margin: EdgeInsets.fromLTRB(12.0, 0.0, 0.0, 0.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.create_rounded,
+                      color: Colors.blue,
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text("Tulis Review")
+                  ],
+                ),
+                Divider(
+                  thickness: 2.0,
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                ReviewBox(
+                  time: DateTime.now(),
+                  comment: "Hebat",
+                  star: 4.5,
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                ReviewBox(
+                  photoProfile: NetworkImage(
+                      "https://yt3.ggpht.com/-IdVo-vK7pr0VRjJDdza1-t1Edjce1Rd1R1hon_3SRIzuQ-XVBTWOJj-UfwYPp8y40KM197_y4o=s900-c-k-c0x00ffffff-no-rj"),
+                  name: "Zeta",
+                  time: DateTime.now(),
+                  comment: "Tidak Hebats",
+                  star: 1,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ];
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(_tabSection);
+  }
 
   @override
   void setState(VoidCallback fn) {
@@ -242,7 +345,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                           color: Colors.blue,
                         ),
                         child: Text(
-                          "Currently Airing",
+                          "Sedang Tayang",
                           style: TextStyle(color: Colors.white),
                         ),
                       ),
@@ -279,79 +382,23 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                 ],
               ),
             ),
-            // Sinopsis
+            //Tab Bar
+            TabBar(
+              controller: _tabController,
+              labelColor: Colors.blue,
+              tabs: [
+                Tab(
+                  text: "Info",
+                ),
+                Tab(
+                  text: "Review",
+                ),
+              ],
+            ),
+            // Content TabBar
             Container(
-              margin: EdgeInsets.fromLTRB(12.0, 12.0, 0.0, 0.0),
-              width: screenWidth - 24,
-              color: Colors.white,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Sinopsis",
-                    style: TitleStyle,
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text("Second Sword Art Online: Progressive movie."),
-                ],
-              ),
-            ),
-            // Review
-            SizedBox(
-              height: 12,
-            ),
-            Container(
-              margin: EdgeInsets.fromLTRB(12.0, 0.0, 0.0, 0.0),
-              width: screenWidth - 24,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Rating & Review",
-                    style: TitleStyle,
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.create_rounded,
-                        color: Colors.blue,
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text("Tulis Review")
-                    ],
-                  ),
-                  Divider(
-                    thickness: 2.0,
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  ReviewBox(
-                    time: DateTime.now(),
-                    comment: "Hebat",
-                    star: 4.5,
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  ReviewBox(
-                    photoProfile: NetworkImage(
-                        "https://yt3.ggpht.com/-IdVo-vK7pr0VRjJDdza1-t1Edjce1Rd1R1hon_3SRIzuQ-XVBTWOJj-UfwYPp8y40KM197_y4o=s900-c-k-c0x00ffffff-no-rj"),
-                    name: "Zeta",
-                    time: DateTime.now(),
-                    comment: "Tidak Hebats",
-                    star: 1,
-                  ),
-                ],
-              ),
-            ),
+              child: _tabContent()[_tabIndex],
+            )
           ],
         ),
       ),
