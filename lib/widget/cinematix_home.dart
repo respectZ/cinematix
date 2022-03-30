@@ -1,3 +1,4 @@
+import 'package:cinematix/page/movie/movie_detail.dart';
 import 'package:flutter/material.dart';
 import 'cinematix_bar.dart';
 
@@ -101,7 +102,10 @@ class _CinematixHomeState extends State<CinematixHome> {
                     itemBuilder: (BuildContext ctx, index) {
                       return InkWell(
                           onTap: () {
-                            print("success");
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => MovieDetailPage()));
                           },
                           child: Container(
                             margin: EdgeInsets.only(left: 5, right: 5),
