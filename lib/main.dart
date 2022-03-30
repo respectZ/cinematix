@@ -48,6 +48,8 @@ class MainAppState extends State<MainApp> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: LoginPage());
+    return Scaffold(
+      body: MainMenu(),
+    );
   }
 }
