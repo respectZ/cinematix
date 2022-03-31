@@ -9,11 +9,51 @@ class CinematixBar extends StatefulWidget {
 
 class _CinematixBarState extends State<CinematixBar> {
   int _currentIndex = 0;
+  String text = 'Home';
 
-  void onTabTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
+  _onTap(int index) async {
+    switch (index) {
+      case 0:
+        setState(() => text = 'Home');
+        _currentIndex = 0;
+        break;
+      case 1:
+        setState(() => text = 'Favorite');
+        _currentIndex = 1;
+        break;
+      case 2:
+        setState(() => text = 'Profile');
+        _currentIndex = 2;
+        break;
+      case 3:
+        setState(() => text = 'Settings');
+        _currentIndex = 3;
+        await showMenu(
+          context: context,
+          color: Color.fromARGB(255, 0, 166, 232),
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(15.0))),
+          position: const RelativeRect.fromLTRB(1000.0, 525.0, 0.0, 0.0),
+          items: [
+            const PopupMenuItem(
+              child: Text(
+                "Setting",
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+            const PopupMenuItem(
+              child: Text("Log Out", style: TextStyle(color: Colors.white)),
+            ),
+            const PopupMenuItem(
+              child: Text("Panduan", style: TextStyle(color: Colors.white)),
+            ),
+          ],
+          elevation: 5.0,
+        );
+        break;
+      default:
+        setState(() => text = 'Home');
+    }
   }
 
   @override
@@ -36,7 +76,7 @@ class _CinematixBarState extends State<CinematixBar> {
                 selectedItemColor: Colors.white,
                 unselectedItemColor: Colors.grey[300],
                 currentIndex: _currentIndex,
-                onTap: onTabTapped,
+                onTap: _onTap,
                 items: const [
                   BottomNavigationBarItem(
                       icon: Icon(
@@ -57,12 +97,8 @@ class _CinematixBarState extends State<CinematixBar> {
                       ),
                       label: "ticket"),
                   BottomNavigationBarItem(
-                      icon: Icon(
-                        Icons.list,
-                        size: 40,
-                      ),
-                      label: "more")
+                      icon: Icon(Icons.list, size: 30), label: "more")
                 ],
-                backgroundColor: Color.fromARGB(255, 0, 166, 232))));
+                backgroundColor: const Color.fromARGB(255, 0, 166, 232))));
   }
 }
