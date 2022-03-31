@@ -50,6 +50,7 @@ class Profil extends StatelessWidget {
           )
         ],
       )),
+      bottomNavigationBar: const CinematixBar(),
     );
   }
   
