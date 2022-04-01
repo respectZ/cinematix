@@ -4,7 +4,7 @@ import '../../widget/reviewbox.dart';
 
 import 'dart:developer';
 
-import '../../core/movie.dart';
+import '../../model/movie.dart';
 
 import 'package:flutter/material.dart';
 
