@@ -36,54 +36,52 @@ class _ReviewState extends State<ReviewBox> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              ClipOval(
-                child: Image(width: 48, height: 48, image: _photoProfile),
-              ),
-              SizedBox(
-                width: 10.0,
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(_name),
-                  Container(
-                    padding: EdgeInsets.all(5.0),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                      color: Colors.blue,
-                    ),
-                    child: Text(
-                      "${widget.time.day.toString()}/${widget.time.month.toString()}/${widget.time.year.toString()}",
-                      style: TextStyle(color: Colors.white),
-                    ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            ClipOval(
+              child: Image(width: 48, height: 48, image: _photoProfile),
+            ),
+            SizedBox(
+              width: 10.0,
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(_name),
+                Container(
+                  padding: EdgeInsets.all(5.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                    color: Colors.blue,
                   ),
-                ],
-              )
-            ],
-          ),
-          SizedBox(
-            height: 5.0,
-          ),
-          RatingBarIndicator(
-            rating: widget.star,
-            itemSize: 20.0,
-            itemBuilder: ((context, index) => Icon(
-                  Icons.star,
-                  color: Colors.blue,
-                )),
-          ),
-          SizedBox(
-            height: 5.0,
-          ),
-          Text(widget.comment)
-        ],
-      ),
+                  child: Text(
+                    "${widget.time.day.toString()}/${widget.time.month.toString()}/${widget.time.year.toString()}",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
+        SizedBox(
+          height: 5.0,
+        ),
+        RatingBarIndicator(
+          rating: widget.star,
+          itemSize: 20.0,
+          itemBuilder: ((context, index) => Icon(
+                Icons.star,
+                color: Colors.blue,
+              )),
+        ),
+        SizedBox(
+          height: 5.0,
+        ),
+        Text(widget.comment)
+      ],
     );
   }
 }
