@@ -1,3 +1,5 @@
+import 'package:cinematix/widget/jadwal_card.dart';
+
 import '../../widget/reviewbox.dart';
 
 import 'dart:developer';
@@ -16,26 +18,34 @@ class MovieDetailPage extends StatefulWidget {
 }
 
 class _MovieDetailPageState extends State<MovieDetailPage>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   TextStyle TitleStyle =
       TextStyle(color: Colors.black, fontWeight: FontWeight.bold);
   // some variables ?
   bool isFavorite = true;
-  late TabController _tabController;
-  int _tabIndex = 0;
+  late TabController _tabMainController;
+  late TabController _tabJadwalController;
+  int _tabMainIndex = 0;
+  int _tabJadwalIndex = 0;
+
+  List<Tab> JadwalList = [];
 
   // Function util
   void _tabSection() {
-    if (_tabController.indexIsChanging) {
+    if (_tabMainController.indexIsChanging) {
       setState(() {
-        _tabIndex = _tabController.index;
-        log(_tabIndex.toString());
+        _tabMainIndex = _tabMainController.index;
+      });
+    }
+    if (_tabJadwalController.indexIsChanging) {
+      setState(() {
+        _tabJadwalIndex = _tabJadwalController.index;
       });
     }
   }
 
   // Function widget
-  List<Widget> _tabContent() {
+  List<Widget> _tabMainContent() {
     return <Widget>[
       Column(
         children: [
@@ -114,14 +124,51 @@ class _MovieDetailPageState extends State<MovieDetailPage>
           ),
         ],
       ),
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            margin: EdgeInsets.fromLTRB(12.0, 0.0, 0.0, 0.0),
+            child: TabBar(
+              controller: _tabJadwalController,
+              isScrollable: true,
+              labelColor: Colors.blue,
+              tabs: JadwalList,
+            ),
+          ),
+          _tabJadwalContent()[_tabJadwalIndex],
+        ],
+      ),
     ];
+  }
+
+  List<Widget> _tabJadwalContent() {
+    return List<Widget>.generate(
+        _tabJadwalController.length,
+        (_) => Column(
+              children: List<Widget>.generate(
+                  4,
+                  (index) => JadwalBox(
+                        NamaRuangan: "Audi ${index + 1}",
+                        ListWaktu: List<DateTime>.generate(
+                            5, (index2) => DateTime.now()),
+                        callback: () => {log("${index}")},
+                      )),
+            ));
   }
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-    _tabController.addListener(_tabSection);
+    _tabMainController = TabController(length: 3, vsync: this);
+    _tabMainController.addListener(_tabSection);
+
+    JadwalList = new List<Tab>.generate(
+        7, (index) => Tab(text: "${index + 10} Maret\nSelasa"));
+
+    _tabJadwalController =
+        TabController(length: JadwalList.length, vsync: this);
+    _tabJadwalController.addListener(_tabSection);
   }
 
   @override
@@ -384,7 +431,7 @@ class _MovieDetailPageState extends State<MovieDetailPage>
             ),
             //Tab Bar
             TabBar(
-              controller: _tabController,
+              controller: _tabMainController,
               labelColor: Colors.blue,
               tabs: [
                 Tab(
@@ -393,18 +440,21 @@ class _MovieDetailPageState extends State<MovieDetailPage>
                 Tab(
                   text: "Review",
                 ),
+                Tab(
+                  text: "Beli Tiket",
+                ),
               ],
             ),
             // Content TabBar
             Container(
-              child: _tabContent()[_tabIndex],
+              child: _tabMainContent()[_tabMainIndex],
             )
           ],
         ),
       ),
-      bottomNavigationBar: Container(
-          height: 45,
-          child: ElevatedButton(onPressed: (() {}), child: Text("Beli Tiket"))),
+      // bottomNavigationBar: Container(
+      //     height: 45,
+      //     child: ElevatedButton(onPressed: (() {}), child: Text("Beli Tiket"))),
     );
   }
 }
