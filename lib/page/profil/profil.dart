@@ -68,8 +68,13 @@ class Profil extends StatelessWidget {
                   Text('Favorit Saya', style: TextStyle(fontSize: 20,)),
 
                   // SizedBox(width: 80,),
+                  
+                  IconButton(
+                    onPressed: () {},
+                    iconSize: 30, 
+                    icon: Icon(Icons.arrow_forward))
 
-                  Icon(Icons.arrow_forward, size: 30,)
+//                   Icon(Icons.arrow_forward, size: 30,)
                 ],
               ),
             ),
@@ -83,9 +88,13 @@ class Profil extends StatelessWidget {
                   Text('Voucher Saya', style: TextStyle(fontSize: 20,)),
 
                   // SizedBox(width: 80,),
+                  IconButton(
+                    onPressed: () {},
+                    iconSize: 30, 
+                    icon: Icon(Icons.arrow_forward))
 
-                  Icon(Icons.arrow_forward,size: 30,)
-                ],
+//                   Icon(Icons.arrow_forward,size: 30,)
+//                 ],
               )
             ),
             Container(
@@ -98,8 +107,12 @@ class Profil extends StatelessWidget {
                   Text('Logout', style: TextStyle(fontSize: 20,)),
 
                   // SizedBox(width: 80,),
+                  IconButton(
+                    onPressed: () {},
+                    iconSize: 30, 
+                    icon: Icon(Icons.arrow_forward))
 
-                  Icon(Icons.arrow_forward, size: 30,)
+//                   Icon(Icons.arrow_forward, size: 30,)
                 ],
               ),),
             
