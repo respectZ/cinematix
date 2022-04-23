@@ -120,7 +120,8 @@ class VoucherSaya extends StatelessWidget {
           ),
         )
       ],
-    ),  
+    ),
+       bottomNavigationBar: const CinematixBar(),
     );
   }
 }
