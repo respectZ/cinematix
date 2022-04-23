@@ -109,6 +109,7 @@ class FavoritSaya extends StatelessWidget {
         )
       ],
       ),
+       bottomNavigationBar: const CinematixBar(),
     );
   }
 }
