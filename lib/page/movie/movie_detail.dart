@@ -1,4 +1,6 @@
+import 'package:cinematix/page/movie/movie_ticket.dart';
 import 'package:cinematix/widget/jadwal_card.dart';
+import 'package:get/get.dart';
 
 import '../../widget/reviewbox.dart';
 
@@ -152,7 +154,7 @@ class _MovieDetailPageState extends State<MovieDetailPage>
                         NamaRuangan: "Audi ${index + 1}",
                         ListWaktu: List<DateTime>.generate(
                             5, (index2) => DateTime.now()),
-                        callback: () => {log("${index}")},
+                        callback: () => Get.toNamed("/movie_ticket"),
                       )),
             ));
   }

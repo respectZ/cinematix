@@ -1,6 +1,9 @@
 import 'package:cinematix/page/movie/movie_detail.dart';
+import 'package:cinematix/page/profil/profil.dart';
 import 'package:flutter/material.dart';
 import 'cinematix_bar.dart';
+
+import 'package:get/get.dart';
 
 class CinematixHome extends StatefulWidget {
   CinematixHome({Key? key, required this.filmList}) : super(key: key);
@@ -35,7 +38,7 @@ class _CinematixHomeState extends State<CinematixHome> {
                 style: TextStyle(color: Colors.black87),
               )),
           IconButton(
-            onPressed: () {},
+            onPressed: () => Get.toNamed("/profile"),
             icon: const Icon(
               Icons.person_outline,
               color: Colors.black87,
@@ -101,12 +104,7 @@ class _CinematixHomeState extends State<CinematixHome> {
                     itemCount: _filmList.length,
                     itemBuilder: (BuildContext ctx, index) {
                       return InkWell(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => MovieDetailPage()));
-                          },
+                          onTap: () => Get.toNamed("/movie_detail"),
                           child: Container(
                             margin: EdgeInsets.only(left: 5, right: 5),
                             alignment: Alignment.center,
