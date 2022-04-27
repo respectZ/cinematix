@@ -1,7 +1,7 @@
 import 'package:cinematix/page/register.dart';
 import 'package:flutter/material.dart';
 
-import 'package:cinematix/controller/login_controller.dart';
+import 'package:cinematix/controller/form_controller.dart';
 import 'package:get/get.dart';
 
 import '../widget/cinematix_container.dart';
