@@ -1,4 +1,6 @@
+import 'package:cinematix/page/camera/scan_qr.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class CinematixBar extends StatefulWidget {
   const CinematixBar({Key? key}) : super(key: key);
@@ -16,10 +18,13 @@ class _CinematixBarState extends State<CinematixBar> {
       case 0:
         setState(() => text = 'Home');
         _currentIndex = 0;
+
         break;
       case 1:
         setState(() => text = 'Favorite');
         _currentIndex = 1;
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => const ScanQr()));
         break;
       case 2:
         setState(() => text = 'Profile');
