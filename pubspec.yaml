@@ -39,6 +39,10 @@ dependencies:
   flutter_rating_bar: ^4.0.0
   get:
   group_button:
+  google_maps_flutter: ^2.1.5
+  geolocator: ^8.2.1
+  provider: ^6.0.2
+  google_place: ^0.4.7
 
 dev_dependencies:
   flutter_test:

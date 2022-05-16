@@ -1,10 +1,12 @@
 import 'package:cinematix/model/voucher.dart';
 import 'package:cinematix/page/favorit_saya/favorit_saya.dart';
+import 'package:cinematix/page/maps/maps.dart';
 import 'package:cinematix/page/voucher_saya/voucher_saya.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 
 import 'package:cinematix/page/login.dart';
@@ -14,16 +16,22 @@ import 'package:cinematix/page/movie/movie_detail.dart';
 import 'package:cinematix/page/movie/movie_ticket.dart';
 import 'package:cinematix/page/profil/profil.dart';
 
+import 'model/location_provider.dart';
+
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
-  runApp(const App());
+  runApp(ChangeNotifierProvider(
+    create: (context) => LocationProvider(),
+    child: App(),
+  ));
 }
 
 class App extends StatelessWidget {
-  const App({Key? key}) : super(key: key);
+  App({Key? key}) : super(key: key);
+  late LocationProvider locationProvider;
 
   // This widget is the root of your application.
   @override
@@ -45,6 +53,7 @@ class App extends StatelessWidget {
         GetPage(name: '/profile/favorite', page: () => FavoritSaya()),
         GetPage(name: '/movie_detail', page: () => MovieDetailPage()),
         GetPage(name: '/movie_ticket', page: () => MovieTicketPage()),
+        GetPage(name: '/cinemas', page: () => CinemaMaps()),
       ],
     );
   }

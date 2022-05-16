@@ -165,7 +165,7 @@ class _MovieDetailPageState extends State<MovieDetailPage>
     _tabMainController = TabController(length: 3, vsync: this);
     _tabMainController.addListener(_tabSection);
 
-    JadwalList = new List<Tab>.generate(
+    JadwalList = List<Tab>.generate(
         7, (index) => Tab(text: "${index + 10} Maret\nSelasa"));
 
     _tabJadwalController =

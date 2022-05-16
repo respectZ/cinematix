@@ -1,9 +1,23 @@
+import 'package:cinematix/model/location_provider.dart';
+import 'package:cinematix/model/user_location.dart';
 import 'package:cinematix/page/movie/movie_detail.dart';
 import 'package:cinematix/page/profil/profil.dart';
 import 'package:flutter/material.dart';
+import 'package:google_place/google_place.dart';
+import 'package:provider/provider.dart';
 import 'cinematix_bar.dart';
 
 import 'package:get/get.dart';
+
+Future<List<SearchResult>?> _searchPlaces(
+    {required UserLocation userLocation}) async {
+  var googlePlace = GooglePlace("AIzaSyAKYtm-TjPrPM3qYwhvGtV_RtEgO8vBCHA");
+  var result = await googlePlace.search.getNearBySearch(
+      Location(lat: userLocation.latitude, lng: userLocation.longitude), 1500,
+      type: "movie_theater", keyword: "bioskop");
+  var cinemas = result!.results;
+  return cinemas;
+}
 
 class CinematixHome extends StatefulWidget {
   CinematixHome({Key? key, required this.filmList}) : super(key: key);
@@ -18,9 +32,11 @@ class _CinematixHomeState extends State<CinematixHome> {
       TextStyle(fontSize: 30, fontWeight: FontWeight.w500);
   // ignore: unused_field
   late final List<Widget> _filmList = widget.filmList;
+  late LocationProvider locationProvider;
 
   @override
   Widget build(BuildContext context) {
+    locationProvider = Provider.of<LocationProvider>(context);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -57,10 +73,21 @@ class _CinematixHomeState extends State<CinematixHome> {
                   height: 75,
                   alignment: Alignment.topLeft,
                   child: Column(children: [
-                    Row(children: const [
-                      Icon(Icons.location_on),
-                      Text("CGV ROXY SQUARE JEMBER")
-                    ]),
+                    InkWell(
+                      onTap: () async {
+                        await locationProvider.getLocation();
+                        var cinemas = await _searchPlaces(
+                            userLocation: locationProvider.userLocation);
+                        Get.toNamed("/cinemas", arguments: {
+                          "locationProvider": locationProvider,
+                          "cinemas": cinemas!
+                        });
+                      },
+                      child: Row(children: const [
+                        Icon(Icons.location_on),
+                        Text("CGV ROXY SQUARE JEMBER"),
+                      ]),
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
