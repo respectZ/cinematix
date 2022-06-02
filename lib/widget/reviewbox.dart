@@ -24,7 +24,7 @@ class ReviewBox extends StatefulWidget {
 
 class _ReviewState extends State<ReviewBox> {
   ImageProvider<Object> _photoProfile = NetworkImage(
-      "https://yt3.ggpht.com/wWe-Gu7jH1gpJJFR4n_9LWVeC3ohD_IAPtyXvEaEqmfbNh7IjGrSdzkiKpEnQn6UIQYrEeZZhg=s900-c-k-c0x00ffffff-no-rj");
+      "https://pbs.twimg.com/profile_images/1509870240506986498/DaM-Seeh_200x200.jpg");
   String _name = "Anonymous";
 
   @override
