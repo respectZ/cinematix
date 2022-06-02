@@ -34,7 +34,8 @@ Widget _buildSchedule() {
 Widget BuildChair(
     {required List<CinemaChair> chair,
     double? width,
-    required Function(int) callback}) {
+    required List<int> selectedSeatId,
+    required Function(Set<Object>) callback}) {
   // Chair.add(CinemaChair(
   //     id: 9999,
   //     row: 15,
@@ -72,10 +73,13 @@ Widget BuildChair(
       width: 40,
       height: 40,
       child: Card(
+        color: selectedSeatId.contains(element.getId())
+            ? Colors.blue
+            : Colors.white,
         child: InkWell(
           onTap: () {
             print(element.getId());
-            callback(element.getId());
+            callback({element.getId(), element.getCode()});
           },
           splashColor: Colors.blue.withAlpha(30),
           child: Center(child: Text(element.getCode())),
@@ -83,19 +87,22 @@ Widget BuildChair(
       ),
     );
   });
-  return ListView(
-    scrollDirection: Axis.horizontal,
-    children: [
-      SizedBox(
-        width: (44 * rowSize).toDouble(),
-        child: Expanded(
-          child: ListView(
-            scrollDirection: Axis.vertical,
-            children: [col],
+  return Center(
+    child: ListView(
+      scrollDirection: Axis.horizontal,
+      shrinkWrap: true,
+      children: [
+        SizedBox(
+          width: (44 * rowSize).toDouble(),
+          child: Expanded(
+            child: ListView(
+              scrollDirection: Axis.vertical,
+              children: [col],
+            ),
           ),
-        ),
-      )
-    ],
+        )
+      ],
+    ),
   );
 }
 
@@ -107,7 +114,8 @@ class MovieTicketPage extends StatefulWidget {
 }
 
 class _MovieTicketPageState extends State<MovieTicketPage> {
-  List<int> selectedSeat = [];
+  List<int> selectedSeatId = [];
+  List<int> selectedSeatCode = [];
 
   List<CinemaChair> Chair = List<CinemaChair>.generate(100, (index) {
     var _tempCol = index % 10;
@@ -152,6 +160,8 @@ class _MovieTicketPageState extends State<MovieTicketPage> {
         ),
       ),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
             margin: EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 0.0),
@@ -163,18 +173,24 @@ class _MovieTicketPageState extends State<MovieTicketPage> {
             child: BuildChair(
                 chair: Chair,
                 width: screenWidth,
-                callback: ((int id) {
-                  print(id);
+                selectedSeatId: selectedSeatId,
+                callback: ((Set<Object> res) {
+                  final id = res.elementAt(0) as int;
+                  final code = res.elementAt(1) as String;
                   setState(() {
-                    if (selectedSeat.contains(id))
-                      selectedSeat.remove(id);
+                    if (selectedSeatId.contains(id))
+                      selectedSeatId.remove(id);
                     else
-                      selectedSeat.add(id);
+                      selectedSeatId.add(id);
                   });
-                  print(selectedSeat);
+                  print(selectedSeatId);
                 })),
           ),
-          Text("_" * 15)
+          Text("_" * 15),
+          SizedBox(
+            height: 15,
+          ),
+          Text(selectedSeatId.join(" "))
         ],
       ),
     );
