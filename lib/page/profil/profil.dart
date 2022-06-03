@@ -1,4 +1,5 @@
 import 'dart:ffi';
+import 'dart:io';
 //import 'dart:js';
 
 import 'package:cinematix/page/voucher_saya/voucher_saya.dart';
@@ -10,19 +11,36 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../widget/cinematix_bar.dart';
 
-class Profil extends StatelessWidget {
-  var text;
-
+class Profil extends StatefulWidget {
   Profil({Key? key}) : super(key: key);
 
-   PickedFile? _imageFile;
+  @override
+  State<Profil> createState() => _ProfilState();
+}
+
+class _ProfilState extends State<Profil> {
+  XFile? photoProfile;
+
   final ImagePicker _picker = ImagePicker();
+
+  @override
+  void setState(VoidCallback fn) {
+    super.setState(fn);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Icon(Icons.arrow_back),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.black45,
+          ),
+        ),
         iconTheme: IconThemeData(
           color: Colors.blue,
         ),
@@ -44,44 +62,49 @@ class Profil extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Stack(children: [
-                      CircleAvatar(
-                      backgroundColor: Colors.grey,
-                      radius: 40.0,
-                      backgroundImage: AssetImage("assets/jjk_form.jpg"),
-                      // child: Image.asset('ria'),
-                      child: Icon(Icons.person_rounded),
-                    ),
-
-                    Positioned(
-                      bottom: -10.0,
-                      right: -2.0,
-
-                      child: InkWell(
-                        onTap: () {
-              showModalBottomSheet(
-                context: context,
-                builder: ((builder) => bottomSheet()),
-              );
-            },
-             child: Container(
-                        height : 50.0,
-                        width: 25.0,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white
+                    Stack(
+                      children: [
+                        CircleAvatar(
+                          backgroundColor: Colors.grey,
+                          radius: 40.0,
+                          backgroundImage: photoProfile != null
+                              ? Image.file(File(photoProfile!.path)).image
+                              : null,
+                          // child: Image.asset('ria'),
+                          child: photoProfile != null
+                              ? null
+                              : Icon(Icons.person_rounded),
                         ),
-                       child : Icon(Icons.camera_alt,
-                      color: Colors.blue,
-                      size: 17.0,),
-                      )
-                    )
-                     
-                  )
-
-                    ],),
-                    
-
+                        Positioned(
+                            bottom: -10.0,
+                            right: -2.0,
+                            child: InkWell(
+                                onTap: () {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    builder: ((builder) => _bottomSheet(
+                                        picker: _picker,
+                                        callback: (XFile? xFile) =>
+                                            setState(() {
+                                              photoProfile =
+                                                  xFile ?? photoProfile;
+                                            }))),
+                                  );
+                                },
+                                child: Container(
+                                  height: 50.0,
+                                  width: 25.0,
+                                  decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.white),
+                                  child: Icon(
+                                    Icons.camera_alt,
+                                    color: Colors.blue,
+                                    size: 17.0,
+                                  ),
+                                )))
+                      ],
+                    ),
                     SizedBox(
                       width: 40,
                     ),
@@ -201,56 +224,47 @@ class Profil extends StatelessWidget {
   }
 }
 
-Widget bottomSheet() {
-    return Container(
-      height: 100.0,
-      width: 200.0,
-      margin: EdgeInsets.symmetric(
-        horizontal: 20,
-        vertical: 20,
-      ),
-      child: Column(
-        children: <Widget>[
-          Text(
-            "Choose Profile photo",
-            style: TextStyle(
-              fontSize: 20.0,
-            ),
+Widget _bottomSheet(
+    {required ImagePicker picker, required Function(XFile?) callback}) {
+  return Container(
+    height: 100.0,
+    width: 200.0,
+    margin: EdgeInsets.symmetric(
+      horizontal: 20,
+      vertical: 20,
+    ),
+    child: Column(
+      children: <Widget>[
+        Text(
+          "Choose profile photo",
+          style: TextStyle(
+            fontSize: 20.0,
           ),
-          SizedBox(
-            height: 20,
+        ),
+        SizedBox(
+          height: 20,
+        ),
+        Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+          TextButton.icon(
+            icon: Icon(Icons.camera),
+            onPressed: () async {
+              Get.back();
+              XFile? res = await picker.pickImage(source: ImageSource.camera);
+              callback(res);
+            },
+            label: Text("Camera"),
           ),
-          Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-            FlatButton.icon(
-              icon: Icon(Icons.camera),
-              onPressed: () {
-                takePhoto(ImageSource.camera);
-              },
-              label: Text("Camera"),
-            ),
-            FlatButton.icon(
-              icon: Icon(Icons.image),
-              onPressed: () {
-                takePhoto(ImageSource.gallery);
-              },
-              label: Text("Gallery"),
-            ),
-          ])
-        ],
-      ),
-    );
-  }
-
-  void takePhoto(ImageSource source) async {
-    var _picker;
-    final pickedFile = await _picker.getImage(
-      source: source,
-    );
-    
-    setState(() {
-      var _imageFile = pickedFile;
-    });
-  }
-
-void setState(Null Function() param0) {
+          TextButton.icon(
+            icon: Icon(Icons.image),
+            onPressed: () async {
+              Get.back();
+              XFile? res = await picker.pickImage(source: ImageSource.gallery);
+              callback(res);
+            },
+            label: Text("Gallery"),
+          ),
+        ])
+      ],
+    ),
+  );
 }
