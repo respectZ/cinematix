@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:cinematix/page/voucher_saya/voucher_saya.dart';
 import 'package:cinematix/page/favorit_saya/favorit_saya.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import 'package:image_picker/image_picker.dart';
@@ -83,6 +84,7 @@ class _ProfilState extends State<Profil> {
                                   showModalBottomSheet(
                                     context: context,
                                     builder: ((builder) => _bottomSheet(
+                                        context: context,
                                         picker: _picker,
                                         callback: (XFile? xFile) =>
                                             setState(() {
@@ -225,7 +227,9 @@ class _ProfilState extends State<Profil> {
 }
 
 Widget _bottomSheet(
-    {required ImagePicker picker, required Function(XFile?) callback}) {
+    {required BuildContext context,
+    required ImagePicker picker,
+    required Function(XFile?) callback}) {
   return Container(
     height: 100.0,
     width: 200.0,
@@ -249,8 +253,18 @@ Widget _bottomSheet(
             icon: Icon(Icons.camera),
             onPressed: () async {
               Get.back();
-              XFile? res = await picker.pickImage(source: ImageSource.camera);
-              callback(res);
+              try {
+                XFile? res = await picker.pickImage(source: ImageSource.camera);
+                callback(res);
+              } on PlatformException catch (err) {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        content: Text(err.message ?? "Terjadi error."),
+                      );
+                    });
+              }
             },
             label: Text("Camera"),
           ),
