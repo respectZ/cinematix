@@ -223,7 +223,7 @@ class _MovieDetailPageState extends State<MovieDetailPage>
                 Container(
                   color: Colors.white,
                   width: screenWidth,
-                  height: 400,
+                  height: 500,
                 ),
                 // Banner
                 Container(

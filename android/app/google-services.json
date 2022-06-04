@@ -29,6 +29,13 @@
             {
               "client_id": "1053495375688-s3bhihpemr8vr9m54paiehmqrsletvj0.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "1053495375688-koampohvjcivkci5jpbagknou52rjm63.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.afive.cinematix"
+              }
             }
           ]
         }

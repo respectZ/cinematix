@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:cinematix/controller/form_controller.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../widget/cinematix_container.dart';
+import 'package:cinematix/model/fire_auth.dart';
 
 class LoginPage extends StatelessWidget {
   LoginPage({Key? key}) : super(key: key);
@@ -59,28 +61,39 @@ class LoginPage extends StatelessWidget {
               onPressed: () async {
                 if (usernameController.text.isNotEmpty &&
                     passwordController.text.isNotEmpty) {
-                  // showDialog(
-                  //     context: context,
-                  //     barrierDismissible: false,
-                  //     builder: (BuildContext context) {
-                  //       return Center(
-                  //         child: CircularProgressIndicator(),
-                  //       );
-                  //     });
-                  // try {
-                  //   UserCredential t = await FirebaseAuth.instance
-                  //       .signInWithEmailAndPassword(
-                  //           email: usernameController.text,
-                  //           password: passwordController.text);
-                  //   print(t.user!.email);
-                  // } on FirebaseAuthException catch (e) {
-                  //   Get.back();
-                  //   if (e.code == "invalid-email") {
-                  //   } else if (e.code == "wrong-password") {
-                  //   } else {}
-                  // }
+                  showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (BuildContext context) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      });
+
+                  try {
+                    User? user = await FireAuth.signIn(
+                        username: usernameController.text,
+                        password: passwordController.text);
+                    if (user != null) {
+                      Get.offAndToNamed("/main");
+                    }
+                  } on FirebaseAuthException catch (e) {
+                    Get.back();
+                    String message = e.code;
+                    if (e.code == "invalid-email" ||
+                        e.code == "wrong-password") {
+                      message = "Periksa username atau password anda.";
+                    } else if (e.code == "network-request-failed") {
+                      message = "Periksa jaringan anda.";
+                    } else if (e.code == "user-not-found") {
+                      message = "Pengguna tidak ditemukan.";
+                    }
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(content: Text(message)));
+                  }
+                  print("done !");
                   // Get.back();
-                  Get.offAndToNamed("/main");
+                  // Get.offAndToNamed("/main");
                   // showDialog(
                   //     context: context,
                   //     builder: (context) {

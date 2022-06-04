@@ -5,6 +5,7 @@ import 'package:cinematix/page/voucher_saya/voucher_saya.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
@@ -21,6 +22,7 @@ import 'model/location_provider.dart';
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  // await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   runApp(ChangeNotifierProvider(
@@ -43,7 +45,7 @@ class App extends StatelessWidget {
         fontFamily: 'Rubik',
       ),
       home: const MainApp(),
-      initialRoute: '/',
+      initialRoute: '/login',
       getPages: [
         GetPage(name: '/login', page: () => LoginPage()),
         GetPage(name: '/register', page: () => RegisterPage()),
