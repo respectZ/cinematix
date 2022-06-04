@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:google_place/google_place.dart';
 import 'package:provider/provider.dart';
 import 'cinematix_bar.dart';
+import 'package:cinematix/model/fire_auth.dart';
+import 'package:cinematix/model/user_cinematix.dart';
 
 import 'package:get/get.dart';
 
@@ -38,6 +40,9 @@ class _CinematixHomeState extends State<CinematixHome>
   late final List<List<Widget>> _filmList = [widget.onGoing, widget.upComing];
   late TabController _tabController;
 
+  // user
+  UserCinematix? userCinematix;
+
   int _tabIndex = 0;
 
   void _tabSection() {
@@ -53,6 +58,10 @@ class _CinematixHomeState extends State<CinematixHome>
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(_tabSection);
+
+    FireAuth.getCurrentUser().then((value) {
+      userCinematix = value;
+    });
   }
 
   @override
@@ -76,12 +85,22 @@ class _CinematixHomeState extends State<CinematixHome>
         ),
         centerTitle: false,
         actions: [
-          TextButton(
-              onPressed: () {},
-              child: const Text(
-                "Artline660",
-                style: TextStyle(color: Colors.black87),
-              )),
+          FutureBuilder<UserCinematix?>(
+              future: FireAuth.getCurrentUser(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<UserCinematix?> snapshot) {
+                if (snapshot.hasData) {
+                  return TextButton(
+                      onPressed: () {},
+                      child: Text(
+                        (snapshot.data)?.getName() ?? "Error",
+                        style: TextStyle(color: Colors.black87),
+                      ));
+                } else if (snapshot.hasError) {
+                  return Text("Error");
+                }
+                return CircularProgressIndicator();
+              }),
           IconButton(
             onPressed: () => Get.toNamed("/profile"),
             icon: const Icon(
