@@ -3,7 +3,7 @@ class UserCinematix {
   final String __phone;
   final String __email;
   final String __password;
-  final String __photo;
+  final String? __photo;
 
   UserCinematix(
       {required String name,
@@ -15,7 +15,7 @@ class UserCinematix {
         __phone = phone,
         __email = email,
         __password = password,
-        __photo = photo!;
+        __photo = photo;
 
   factory UserCinematix.fromJSON(Map<String, dynamic> json) => UserCinematix(
       name: json['name'] as String,
@@ -28,5 +28,5 @@ class UserCinematix {
   String getPhone() => __phone;
   String getEmail() => __email;
   String getPassword() => __password;
-  String getPhoto() => __photo;
+  String? getPhoto() => __photo;
 }
