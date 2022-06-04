@@ -230,11 +230,12 @@ class _MovieDetailPageState extends State<MovieDetailPage>
                   height: 200,
                   width: screenWidth,
                   decoration: BoxDecoration(
+                    color: Colors.grey,
                     image: DecorationImage(
                         colorFilter: ColorFilter.mode(
                             Color.fromARGB(255, 255, 255, 255),
                             BlendMode.darken),
-                        fit: BoxFit.fill,
+                        fit: BoxFit.fitHeight,
                         image: NetworkImage(
                             "https://cdn.myanimelist.net/s/common/uploaded_files/1635784561-2e7ef92151ba666376667b57500afbf9.jpeg")),
                     borderRadius: BorderRadius.only(
