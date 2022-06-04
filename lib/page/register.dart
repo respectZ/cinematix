@@ -45,6 +45,9 @@ class RegisterPage extends StatelessWidget {
             prefixIcon: Icon(Icons.key),
           ),
         ),
+        Expanded(
+          child: Container(),
+        ),
         SizedBox(
           width: 200,
           child: ElevatedButton(

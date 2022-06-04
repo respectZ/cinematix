@@ -3,9 +3,13 @@ import 'package:flutter/material.dart';
 class CinematixContainer extends StatefulWidget {
   List<Widget> formChild = [];
   List<Widget> bottomChild = [];
+  MainAxisAlignment? alignment;
 
   CinematixContainer(
-      {Key? key, required this.formChild, required this.bottomChild})
+      {Key? key,
+      required this.formChild,
+      required this.bottomChild,
+      this.alignment})
       : super(key: key);
 
   @override
@@ -34,7 +38,7 @@ class _CinematixContainerState extends State<CinematixContainer> {
         Center(
             child: Container(
           width: 300,
-          height: MediaQuery.of(context).size.height / 1.5,
+          height: 390,
           decoration: BoxDecoration(
               boxShadow: [
                 BoxShadow(
@@ -52,7 +56,7 @@ class _CinematixContainerState extends State<CinematixContainer> {
                   bottomRight: Radius.circular(10))),
           padding: EdgeInsets.fromLTRB(40, 40, 40, 40),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: widget.alignment ?? MainAxisAlignment.start,
             children: widget.formChild,
           ),
         ))
