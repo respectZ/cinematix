@@ -40,8 +40,7 @@ class _CinematixHomeState extends State<CinematixHome>
   late final List<List<Widget>> _filmList = [widget.onGoing, widget.upComing];
   late TabController _tabController;
 
-  // user
-  UserCinematix? userCinematix;
+  Future<UserCinematix?> userCinematix = FireAuth.getCurrentUser();
 
   int _tabIndex = 0;
 
@@ -58,10 +57,6 @@ class _CinematixHomeState extends State<CinematixHome>
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(_tabSection);
-
-    FireAuth.getCurrentUser().then((value) {
-      userCinematix = value;
-    });
   }
 
   @override
@@ -86,7 +81,7 @@ class _CinematixHomeState extends State<CinematixHome>
         centerTitle: false,
         actions: [
           FutureBuilder<UserCinematix?>(
-              future: FireAuth.getCurrentUser(),
+              future: userCinematix,
               builder: (BuildContext context,
                   AsyncSnapshot<UserCinematix?> snapshot) {
                 if (snapshot.hasData) {

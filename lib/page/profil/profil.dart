@@ -1,8 +1,5 @@
-import 'dart:ffi';
 import 'dart:io';
 
-import 'package:cinematix/page/voucher_saya/voucher_saya.dart';
-import 'package:cinematix/page/favorit_saya/favorit_saya.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -10,6 +7,9 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../widget/cinematix_bar.dart';
+
+import 'package:cinematix/model/fire_auth.dart';
+import 'package:cinematix/model/user_cinematix.dart';
 
 class Profil extends StatefulWidget {
   Profil({Key? key}) : super(key: key);
@@ -20,6 +20,8 @@ class Profil extends StatefulWidget {
 
 class _ProfilState extends State<Profil> {
   XFile? photoProfile;
+
+  Future<UserCinematix?> userCinematix = FireAuth.getCurrentUser();
 
   final ImagePicker _picker = ImagePicker();
 
@@ -64,6 +66,7 @@ class _ProfilState extends State<Profil> {
                   children: [
                     Stack(
                       children: [
+                        // Avatar
                         CircleAvatar(
                           backgroundColor: Colors.grey,
                           radius: 40.0,
@@ -109,20 +112,28 @@ class _ProfilState extends State<Profil> {
                     SizedBox(
                       width: 40,
                     ),
-                    Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Ria Fitriyah',
-                            style: TextStyle(
-                              fontSize: 16,
-                            ),
-                          ),
-                          Text(
-                            '0938276325',
-                            style: TextStyle(fontSize: 16),
-                          ),
-                        ])
+                    // Nama & no hp
+                    FutureBuilder<UserCinematix?>(
+                        future: userCinematix,
+                        builder: (BuildContext context,
+                            AsyncSnapshot<UserCinematix?> snapshot) {
+                          return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                snapshot.hasData
+                                    ? (Text(
+                                        snapshot.data!.getName(),
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                        ),
+                                      ))
+                                    : (CircularProgressIndicator()),
+                                Text(
+                                  '0938276325',
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                              ]);
+                        }),
                   ],
                 ),
               ],
