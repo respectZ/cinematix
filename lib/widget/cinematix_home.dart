@@ -62,6 +62,9 @@ class _CinematixHomeState extends State<CinematixHome>
 
   @override
   Widget build(BuildContext context) {
+    // setting
+    final double width = MediaQuery.of(context).size.width;
+    final double height = MediaQuery.of(context).size.width;
     locationProvider = Provider.of<LocationProvider>(context);
     return Scaffold(
       appBar: AppBar(
@@ -95,8 +98,6 @@ class _CinematixHomeState extends State<CinematixHome>
           child: Column(
             children: [
               Container(
-                  width: 300,
-                  height: 75,
                   alignment: Alignment.topLeft,
                   child: Column(children: [
                     InkWell(
@@ -114,67 +115,47 @@ class _CinematixHomeState extends State<CinematixHome>
                         Text("CGV ROXY SQUARE JEMBER"),
                       ]),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {},
-                          child: Text("On Going"),
-                          style: ElevatedButton.styleFrom(
-                              minimumSize: Size(145, 30), elevation: 0),
-                        ),
-                        ElevatedButton(
-                            onPressed: () {},
-                            child: Text("Up Coming"),
-                            style: ElevatedButton.styleFrom(
-                                minimumSize: Size(145, 30),
-                                onPrimary: Colors.grey[400],
-                                primary: Colors.transparent,
-                                elevation: 0))
-                      ],
-                    ),
-                    Row(children: const [
-                      Icon(Icons.location_on),
-                      Text("CGV ROXY SQUARE JEMBER")
-                    ]),
                     TabBar(
                         controller: _tabController,
                         labelColor: Colors.blue,
                         tabs: [Tab(text: "ONGOING"), Tab(text: "UPCOMING")])
                   ])),
-              Container(
-                width: 300,
-                height: 500,
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    boxShadow: const [
-                      BoxShadow(
-                          color: Colors.black,
-                          blurRadius: 15,
-                          offset: Offset(5, 10),
-                          spreadRadius: -10)
-                    ],
-                    borderRadius: BorderRadius.circular(10)),
-                child: GridView.builder(
-                    gridDelegate:
-                        const SliverGridDelegateWithMaxCrossAxisExtent(
-                            maxCrossAxisExtent: 200,
-                            childAspectRatio: 3.75 / 2,
-                            crossAxisSpacing: 5,
-                            mainAxisSpacing: 20),
-                    itemCount: _filmList[_tabIndex].length,
-                    itemBuilder: (BuildContext ctx, index) {
-                      return InkWell(
-                          onTap: () => Get.toNamed("/movie_detail"),
-                          child: Container(
-                            margin: EdgeInsets.only(left: 5, right: 5),
-                            alignment: Alignment.center,
-                            child: _filmList[_tabIndex][index],
-                            decoration: BoxDecoration(
-                                color: Colors.amber,
-                                borderRadius: BorderRadius.circular(15)),
-                          ));
-                    }),
+              SizedBox(
+                height: 12,
+              ),
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: const [
+                        BoxShadow(
+                            color: Colors.black,
+                            blurRadius: 15,
+                            offset: Offset(5, 10),
+                            spreadRadius: -10)
+                      ],
+                      borderRadius: BorderRadius.circular(10)),
+                  child: GridView.builder(
+                      gridDelegate:
+                          const SliverGridDelegateWithMaxCrossAxisExtent(
+                              maxCrossAxisExtent: 200,
+                              childAspectRatio: 3.75 / 2,
+                              crossAxisSpacing: 5,
+                              mainAxisSpacing: 20),
+                      itemCount: _filmList[_tabIndex].length,
+                      itemBuilder: (BuildContext ctx, index) {
+                        return InkWell(
+                            onTap: () => Get.toNamed("/movie_detail"),
+                            child: Container(
+                              margin: EdgeInsets.only(left: 5, right: 5),
+                              alignment: Alignment.center,
+                              child: _filmList[_tabIndex][index],
+                              decoration: BoxDecoration(
+                                  color: Colors.amber,
+                                  borderRadius: BorderRadius.circular(15)),
+                            ));
+                      }),
+                ),
               )
             ],
           )),

@@ -1,6 +1,5 @@
 import 'dart:ffi';
 import 'dart:io';
-//import 'dart:js';
 
 import 'package:cinematix/page/voucher_saya/voucher_saya.dart';
 import 'package:cinematix/page/favorit_saya/favorit_saya.dart';
