@@ -1,3 +1,4 @@
+import 'package:cinematix/model/user_cinematix.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -77,5 +78,39 @@ class FireAuth {
 
   static Future<void> signOut() async {
     await FirebaseAuth.instance.signOut();
+  }
+
+  static Future<UserCinematix?> getCurrentUser() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      return null;
+    }
+    // QuerySnapshot querySnapshot =
+    //     await FirebaseFirestore.instance.collection("user").get();
+    // final users = querySnapshot.docs.map((e) {
+    //   final _user = e.data();
+    //   final _username = e.id;
+    //   return {_username: _user};
+    // }).toList();
+    UserCinematix userCinematix = UserCinematix(
+        name: user.displayName ?? "undefined",
+        phone: user.phoneNumber ?? "undefined",
+        email: user.email ?? "undefined",
+        photo: user.photoURL,
+        password: "-");
+    return userCinematix;
+  }
+
+  static Future<void> updateUser(
+      {String? displayName,
+      String? photoURL,
+      PhoneAuthCredential? phoneCredential}) async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      return;
+    }
+    if (displayName != null) user.updateDisplayName(displayName);
+    if (photoURL != null) user.updatePhotoURL(photoURL);
+    if (phoneCredential != null) await user.updatePhoneNumber(phoneCredential);
   }
 }
