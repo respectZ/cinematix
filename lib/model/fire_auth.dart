@@ -66,13 +66,16 @@ class FireAuth {
     }
     try {
       // berarti ada
-      UserCredential userCredential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(
-              email: userDocument["email"], password: password);
+      UserCredential userCredential = await auth.signInWithEmailAndPassword(
+          email: userDocument["email"], password: password);
       user = userCredential.user;
     } on StateError catch (e) {
       throw FirebaseAuthException(code: "user-not-found");
     }
     return user;
+  }
+
+  static Future<void> signOut() async {
+    await FirebaseAuth.instance.signOut();
   }
 }

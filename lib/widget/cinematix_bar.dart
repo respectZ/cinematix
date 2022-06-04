@@ -1,4 +1,6 @@
 import 'package:cinematix/page/camera/scan_qr.dart';
+import 'package:cinematix/model/fire_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -46,7 +48,18 @@ class _CinematixBarState extends State<CinematixBar> {
                 style: TextStyle(color: Colors.white),
               ),
             ),
-            const PopupMenuItem(
+            PopupMenuItem(
+              onTap: () async {
+                await FireAuth.signOut();
+                FirebaseAuth.instance.authStateChanges().listen((User? user) {
+                  if (user == null) {
+                    Get.offAndToNamed("/login");
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Terdapat kesalahan.")));
+                  }
+                });
+              },
               child: Text("Log Out", style: TextStyle(color: Colors.white)),
             ),
             const PopupMenuItem(

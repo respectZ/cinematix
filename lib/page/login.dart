@@ -1,10 +1,7 @@
-import 'package:cinematix/page/register.dart';
 import 'package:flutter/material.dart';
 
-import 'package:cinematix/controller/form_controller.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../widget/cinematix_container.dart';
 import 'package:cinematix/model/fire_auth.dart';

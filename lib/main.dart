@@ -45,7 +45,8 @@ class App extends StatelessWidget {
         fontFamily: 'Rubik',
       ),
       home: const MainApp(),
-      initialRoute: '/login',
+      initialRoute:
+          FirebaseAuth.instance.currentUser == null ? '/login' : '/main',
       getPages: [
         GetPage(name: '/login', page: () => LoginPage()),
         GetPage(name: '/register', page: () => RegisterPage()),
