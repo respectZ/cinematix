@@ -1,7 +1,10 @@
 import 'package:cinematix/model/user_cinematix.dart';
+import 'package:cinematix/model/review.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:get/state_manager.dart';
 
 class FireAuth {
   static Future<User?> registerUsingEmailPassword({
@@ -113,4 +116,46 @@ class FireAuth {
     if (photoURL != null) user.updatePhotoURL(photoURL);
     if (phoneCredential != null) await user.updatePhoneNumber(phoneCredential);
   }
+
+  static Future<void> addReview(
+      {required int? movie_id,
+      required String? user_email,
+      required int? star_rating,
+      required String? comment}) async {
+    await FirebaseFirestore.instance
+        .collection('review')
+        .doc()
+        .set({
+          'movie_id': movie_id,
+          'user_email': user_email,
+          'star_rating': star_rating,
+          'comment': comment
+        })
+        .whenComplete(() => print("review added to database"))
+        .catchError((e) => print(e));
+  }
+
+  static Future<List<Review?>> getReview({required int? movie_id}) async {
+    List<Review> review_data = [];
+    QuerySnapshot review_by_movie_id = await FirebaseFirestore.instance
+        .collection('review')
+        .where('movie_id', isEqualTo: movie_id)
+        .get();
+    for (var i = 0; i < review_by_movie_id.docs.length; i++) {
+      Review review_one = Review(
+          movieId: review_by_movie_id.docs[i]['movie_id'],
+          userEmail: review_by_movie_id.docs[i]['user_email'],
+          starRating: review_by_movie_id.docs[i]['star_rating'],
+          comment: review_by_movie_id.docs[i]['comment']);
+      review_data.add(review_one);
+    }
+    return review_data;
+  }
 }
+
+
+
+// void main() {
+//   // var x = FireAuth.getReview(movie_id: 3);
+//   print("yes");
+// }

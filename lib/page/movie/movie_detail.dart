@@ -1,5 +1,8 @@
+import 'package:cinematix/model/fire_auth.dart';
+import 'package:cinematix/model/review.dart';
 import 'package:cinematix/page/movie/movie_ticket.dart';
 import 'package:cinematix/widget/jadwal_card.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 
 import '../../widget/reviewbox.dart';
@@ -31,6 +34,7 @@ class _MovieDetailPageState extends State<MovieDetailPage>
   int _tabJadwalIndex = 0;
 
   List<Tab> JadwalList = [];
+  Future<List<Review?>> list_review = FireAuth.getReview(movie_id: 3);
 
   // Function util
   void _tabSection() {
@@ -105,22 +109,29 @@ class _MovieDetailPageState extends State<MovieDetailPage>
                 SizedBox(
                   height: 10,
                 ),
-                ReviewBox(
-                  time: DateTime.now(),
-                  comment: "Hebat",
-                  star: 4.5,
-                ),
+                FutureBuilder(
+                    future: list_review,
+                    builder: (BuildContext context,
+                        AsyncSnapshot<List<Review?>> snapshot) {
+                      return ReviewBox(
+                          name: snapshot.data![0]!.getUserEmail(),
+                          time: DateTime.now(),
+                          comment: snapshot.data![0]!.getComment(),
+                          star: snapshot.data![0]!.getStarRating().toDouble());
+                    }),
                 SizedBox(
                   height: 10,
                 ),
-                ReviewBox(
-                  photoProfile: NetworkImage(
-                      "https://yt3.ggpht.com/-IdVo-vK7pr0VRjJDdza1-t1Edjce1Rd1R1hon_3SRIzuQ-XVBTWOJj-UfwYPp8y40KM197_y4o=s900-c-k-c0x00ffffff-no-rj"),
-                  name: "Zeta",
-                  time: DateTime.now(),
-                  comment: "Tidak Hebats",
-                  star: 1,
-                ),
+                FutureBuilder(
+                    future: list_review,
+                    builder: (BuildContext context,
+                        AsyncSnapshot<List<Review?>> snapshot) {
+                      return ReviewBox(
+                          name: snapshot.data![1]!.getUserEmail(),
+                          time: DateTime.now(),
+                          comment: snapshot.data![1]!.getComment(),
+                          star: snapshot.data![0]!.getStarRating().toDouble());
+                    }),
               ],
             ),
           ),
