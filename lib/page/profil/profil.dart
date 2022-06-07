@@ -10,6 +10,7 @@ import '../../widget/cinematix_bar.dart';
 
 import 'package:cinematix/model/fire_auth.dart';
 import 'package:cinematix/model/user_cinematix.dart';
+import 'package:shimmer/shimmer.dart';
 
 class Profil extends StatefulWidget {
   Profil({Key? key}) : super(key: key);
