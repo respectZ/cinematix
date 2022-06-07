@@ -10,6 +10,7 @@ import '../../widget/cinematix_bar.dart';
 
 import 'package:cinematix/model/fire_auth.dart';
 import 'package:cinematix/model/user_cinematix.dart';
+import 'package:shimmer/shimmer.dart';
 
 class Profil extends StatefulWidget {
   Profil({Key? key}) : super(key: key);
@@ -128,10 +129,14 @@ class _ProfilState extends State<Profil> {
                                         ),
                                       ))
                                     : (CircularProgressIndicator()),
-                                Text(
-                                  '0938276325',
-                                  style: TextStyle(fontSize: 16),
-                                ),
+                                snapshot.hasData
+                                    ? (Text(
+                                        snapshot.data!.getPhone(),
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                        ),
+                                      ))
+                                    : (CircularProgressIndicator()),
                               ]);
                         }),
                   ],

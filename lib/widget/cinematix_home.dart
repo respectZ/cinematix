@@ -5,11 +5,30 @@ import 'package:cinematix/page/profil/profil.dart';
 import 'package:flutter/material.dart';
 import 'package:google_place/google_place.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 import 'cinematix_bar.dart';
 import 'package:cinematix/model/fire_auth.dart';
 import 'package:cinematix/model/user_cinematix.dart';
+import 'package:cinematix/model/movie.dart';
 
 import 'package:get/get.dart';
+
+Widget movieToWidget({required Movie? movie}) {
+  return InkWell(
+    onTap: () async {
+      Get.toNamed("/movie_detail");
+    },
+    child: Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        image: DecorationImage(
+          fit: BoxFit.cover,
+          image: NetworkImage(movie!.getImage()),
+        ),
+      ),
+    ),
+  );
+}
 
 Future<List<SearchResult>?> _searchPlaces(
     {required UserLocation userLocation}) async {
@@ -24,8 +43,8 @@ Future<List<SearchResult>?> _searchPlaces(
 class CinematixHome extends StatefulWidget {
   CinematixHome({Key? key, required this.onGoing, required this.upComing})
       : super(key: key);
-  final List<Widget> onGoing;
-  final List<Widget> upComing;
+  final List<Movie?> onGoing;
+  final List<Movie?> upComing;
 
   @override
   _CinematixHomeState createState() => _CinematixHomeState();
@@ -37,7 +56,7 @@ class _CinematixHomeState extends State<CinematixHome>
       TextStyle(fontSize: 30, fontWeight: FontWeight.w500);
   // ignore: unused_field
   late LocationProvider locationProvider;
-  late final List<List<Widget>> _filmList = [widget.onGoing, widget.upComing];
+  late final List<List<Movie?>> _filmList = [widget.onGoing, widget.upComing];
   late TabController _tabController;
 
   Future<UserCinematix?> userCinematix = FireAuth.getCurrentUser();
@@ -94,7 +113,16 @@ class _CinematixHomeState extends State<CinematixHome>
                 } else if (snapshot.hasError) {
                   return Text("Error");
                 }
-                return CircularProgressIndicator();
+                return Shimmer.fromColors(
+                  baseColor: Colors.grey[300]!,
+                  highlightColor: Colors.grey[100]!,
+                  enabled: true,
+                  child: Container(
+                    width: 90,
+                    height: 20,
+                    color: Colors.grey,
+                  ),
+                );
               }),
           IconButton(
             onPressed: () => Get.toNamed("/profile"),
@@ -158,16 +186,15 @@ class _CinematixHomeState extends State<CinematixHome>
                               mainAxisSpacing: 20),
                       itemCount: _filmList[_tabIndex].length,
                       itemBuilder: (BuildContext ctx, index) {
-                        return InkWell(
-                            onTap: () => Get.toNamed("/movie_detail"),
-                            child: Container(
-                              margin: EdgeInsets.only(left: 5, right: 5),
-                              alignment: Alignment.center,
-                              child: _filmList[_tabIndex][index],
-                              decoration: BoxDecoration(
-                                  color: Colors.amber,
-                                  borderRadius: BorderRadius.circular(15)),
-                            ));
+                        return Container(
+                          margin: EdgeInsets.only(left: 5, right: 5),
+                          alignment: Alignment.center,
+                          child:
+                              movieToWidget(movie: _filmList[_tabIndex][index]),
+                          decoration: BoxDecoration(
+                              color: Colors.amber,
+                              borderRadius: BorderRadius.circular(15)),
+                        );
                       }),
                 ),
               )
