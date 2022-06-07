@@ -1,8 +1,12 @@
+import 'dart:ffi';
+
 import 'package:cinematix/model/fire_auth.dart';
 import 'package:cinematix/model/review.dart';
+import 'package:cinematix/model/user_cinematix.dart';
 import 'package:cinematix/page/movie/movie_ticket.dart';
 import 'package:cinematix/widget/jadwal_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 
 import '../../widget/reviewbox.dart';
@@ -35,6 +39,12 @@ class _MovieDetailPageState extends State<MovieDetailPage>
 
   List<Tab> JadwalList = [];
   Future<List<Review?>> list_review = FireAuth.getReview(movie_id: 3);
+  Future<UserCinematix?> userCinematix = FireAuth.getCurrentUser();
+
+  double _ratingBarMode = 1;
+  TextEditingController reviewController = TextEditingController();
+
+  late List<Widget> _listofreviewwidget;
 
   // Function util
   void _tabSection() {
@@ -91,6 +101,27 @@ class _MovieDetailPageState extends State<MovieDetailPage>
                 SizedBox(
                   height: 10,
                 ),
+                Row(children: [
+                  Icon(
+                    Icons.star,
+                    color: Colors.blue,
+                  ),
+                  Text(
+                    "Rating: ",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  RatingBar.builder(
+                      initialRating: 4.5,
+                      itemSize: 20,
+                      direction: Axis.horizontal,
+                      allowHalfRating: true,
+                      itemBuilder: (context, _) =>
+                          Icon(Icons.star, color: Colors.amber),
+                      onRatingUpdate: (rating) {
+                        _ratingBarMode = rating;
+                        print(_ratingBarMode);
+                      }),
+                ]),
                 Row(
                   children: [
                     Icon(
@@ -98,40 +129,81 @@ class _MovieDetailPageState extends State<MovieDetailPage>
                       color: Colors.blue,
                     ),
                     SizedBox(
-                      width: 10,
+                      width: 250,
+                      child: TextField(
+                        autocorrect: false,
+                        enableSuggestions: false,
+                        controller: reviewController,
+                        decoration: InputDecoration(hintText: 'Tulis Review'),
+                      ),
                     ),
-                    Text("Tulis Review")
+                    FutureBuilder(
+                        future: userCinematix,
+                        builder: (BuildContext context,
+                            AsyncSnapshot<UserCinematix?> snapshot) {
+                          return IconButton(
+                              onPressed: () async {
+                                if (reviewController.text.isNotEmpty) {
+                                  showDialog(
+                                      context: context,
+                                      barrierDismissible: false,
+                                      builder: (BuildContext context) {
+                                        return Center(
+                                          child: CircularProgressIndicator(),
+                                        );
+                                      });
+
+                                  try {
+                                    FireAuth.addReview(
+                                        movie_id: 3,
+                                        user_email: snapshot.data!.getEmail(),
+                                        star_rating: _ratingBarMode,
+                                        comment: reviewController.text);
+                                    reviewController.clear();
+                                    Get.offAndToNamed("/movie/movie_detail");
+                                    setState(() {});
+                                  } catch (e) {
+                                    print(e);
+                                  }
+                                }
+                              },
+                              icon: Icon(
+                                Icons.send,
+                                color: Colors.blue,
+                              ));
+                        })
                   ],
                 ),
                 Divider(
                   thickness: 2.0,
                 ),
-                SizedBox(
-                  height: 10,
-                ),
                 FutureBuilder(
                     future: list_review,
                     builder: (BuildContext context,
                         AsyncSnapshot<List<Review?>> snapshot) {
-                      return ReviewBox(
-                          name: snapshot.data![0]!.getUserEmail(),
-                          time: DateTime.now(),
-                          comment: snapshot.data![0]!.getComment(),
-                          star: snapshot.data![0]!.getStarRating().toDouble());
-                    }),
-                SizedBox(
-                  height: 10,
-                ),
-                FutureBuilder(
-                    future: list_review,
-                    builder: (BuildContext context,
-                        AsyncSnapshot<List<Review?>> snapshot) {
-                      return ReviewBox(
-                          name: snapshot.data![1]!.getUserEmail(),
-                          time: DateTime.now(),
-                          comment: snapshot.data![1]!.getComment(),
-                          star: snapshot.data![0]!.getStarRating().toDouble());
-                    }),
+                      if (!snapshot.hasError) {
+                        if (snapshot.hasData) {
+                          List<Widget> list_rev = [];
+                          List<Review?> list_review = snapshot.data!;
+                          list_rev = list_review
+                              .map((e) => ReviewBox(
+                                  time: DateTime.now(),
+                                  comment: e!.getComment(),
+                                  star: e.getStarRating(),
+                                  name: e.getUserEmail()))
+                              .toList();
+                          print(list_review[0]!.getStarRating());
+                          return ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: list_review.length,
+                              itemBuilder: (context, index) {
+                                return list_rev[index];
+                              });
+                        } else
+                          return Text("Belum Ada Review");
+                      } else
+                        return Text("Error");
+                    })
               ],
             ),
           ),

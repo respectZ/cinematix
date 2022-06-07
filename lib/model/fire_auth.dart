@@ -120,7 +120,7 @@ class FireAuth {
   static Future<void> addReview(
       {required int? movie_id,
       required String? user_email,
-      required int? star_rating,
+      required double? star_rating,
       required String? comment}) async {
     await FirebaseFirestore.instance
         .collection('review')
@@ -145,7 +145,7 @@ class FireAuth {
       Review review_one = Review(
           movieId: review_by_movie_id.docs[i]['movie_id'],
           userEmail: review_by_movie_id.docs[i]['user_email'],
-          starRating: review_by_movie_id.docs[i]['star_rating'],
+          starRating: review_by_movie_id.docs[i]['star_rating'].toDouble(),
           comment: review_by_movie_id.docs[i]['comment']);
       review_data.add(review_one);
     }
