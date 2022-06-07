@@ -129,10 +129,14 @@ class _ProfilState extends State<Profil> {
                                         ),
                                       ))
                                     : (CircularProgressIndicator()),
-                                Text(
-                                  '0938276325',
-                                  style: TextStyle(fontSize: 16),
-                                ),
+                                snapshot.hasData
+                                    ? (Text(
+                                        snapshot.data!.getPhone(),
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                        ),
+                                      ))
+                                    : (CircularProgressIndicator()),
                               ]);
                         }),
                   ],

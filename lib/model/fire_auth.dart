@@ -129,16 +129,15 @@ class FireAuth {
     if (user == null) {
       return null;
     }
-    // QuerySnapshot querySnapshot =
-    //     await FirebaseFirestore.instance.collection("user").get();
-    // final users = querySnapshot.docs.map((e) {
-    //   final _user = e.data();
-    //   final _username = e.id;
-    //   return {_username: _user};
-    // }).toList();
+    var users =
+        await CinematixFirestore.getAllFromCollection(collection_name: "user");
+    // Find from users where email = email
+    users = users.where((element) => element["email"] == user.email).toList();
+    var _user = users[0];
+
     UserCinematix userCinematix = UserCinematix(
-        name: user.displayName ?? "undefined",
-        phone: user.phoneNumber ?? "undefined",
+        name: user.displayName ?? _user["nama"] ?? "undefined",
+        phone: user.phoneNumber ?? _user["phone"] ?? "undefined",
         email: user.email ?? "undefined",
         photo: user.photoURL,
         password: "-");
