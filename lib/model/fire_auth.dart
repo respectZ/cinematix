@@ -1,3 +1,4 @@
+import 'package:cinematix/model/service/cinematix_firestore.dart';
 import 'package:cinematix/model/user_cinematix.dart';
 import 'package:cinematix/model/review.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -7,6 +8,46 @@ import 'package:flutter/material.dart';
 import 'package:get/state_manager.dart';
 
 class FireAuth {
+  static Future<void> register(
+      {required String username,
+      required String namaLengkap,
+      required String email,
+      required String no_hp,
+      required String password}) async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    try {
+      // cek dulu if username exists
+      var usernameCollection = await FirebaseFirestore.instance
+          .collection("user")
+          .doc(username)
+          .get();
+      if (usernameCollection.exists) {
+        throw FirebaseAuthException(code: "username-already-in-use");
+      }
+      // cek kalo nomorhp exists
+      var listUser = await CinematixFirestore.getAllFromCollection(
+          collection_name: "user");
+      for (Map<String, dynamic> _user in listUser) {
+        if (_user["phone"] == no_hp) {
+          throw FirebaseAuthException(code: "phone-already-in-use");
+        }
+      }
+      UserCredential userCredential = await auth.createUserWithEmailAndPassword(
+          email: email, password: password);
+      userCredential.user?.updateDisplayName(namaLengkap);
+      // insert into collection
+      await FirebaseFirestore.instance.collection("user").doc(username).set({
+        "email": email,
+        "nama": namaLengkap,
+        "phone": no_hp,
+      });
+    } on FirebaseAuthException catch (e) {
+      throw FirebaseAuthException(code: e.code);
+    } catch (e) {
+      print(e);
+    }
+  }
+
   static Future<User?> registerUsingEmailPassword({
     required String name,
     required String email,
