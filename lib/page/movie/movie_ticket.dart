@@ -1,4 +1,5 @@
 import 'dart:ffi';
+import 'package:cinematix/model/fire_auth.dart';
 import 'package:intl/intl.dart';
 
 import 'package:flutter/material.dart';
@@ -155,7 +156,7 @@ class _MovieTicketPageState extends State<MovieTicketPage> {
         backgroundColor: Colors.white,
         elevation: 0,
         title: const Text(
-          "CINEMATIX",
+          "Beli Tiket",
           style: TextStyle(color: Color.fromARGB(255, 0, 166, 232)),
         ),
         centerTitle: false,
@@ -208,6 +209,9 @@ class _MovieTicketPageState extends State<MovieTicketPage> {
             }).toList().reduce((value, element) => value + element))),
             SizedBox(
               height: 15,
+            ),
+            SizedBox(
+              height: 10,
             )
           ],
         ),
@@ -218,7 +222,9 @@ class _MovieTicketPageState extends State<MovieTicketPage> {
             style: selectedChair.length == 0
                 ? ElevatedButton.styleFrom(primary: Colors.grey)
                 : ElevatedButton.styleFrom(),
-            onPressed: (() {}),
+            onPressed: (() async {
+              FireAuth.buyTicket(ticketId: "r25H30YzeSePWfx5jgqS");
+            }),
             child: Text("Beli Tiket"),
           )),
     );

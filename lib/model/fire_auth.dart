@@ -136,6 +136,7 @@ class FireAuth {
     var _user = users[0];
 
     UserCinematix userCinematix = UserCinematix(
+        username: _user["id"],
         name: user.displayName ?? _user["nama"] ?? "undefined",
         phone: user.phoneNumber ?? _user["phone"] ?? "undefined",
         email: user.email ?? "undefined",
@@ -175,7 +176,7 @@ class FireAuth {
         .catchError((e) => print(e));
   }
 
-  static Future<List<Review?>> getReview({required int? movie_id}) async {
+  static Future<List<Review?>> getReview({required String movie_id}) async {
     List<Review> review_data = [];
     QuerySnapshot review_by_movie_id = await FirebaseFirestore.instance
         .collection('review')
@@ -190,6 +191,33 @@ class FireAuth {
       review_data.add(review_one);
     }
     return review_data;
+  }
+
+  static Future<void> AddUserFavorite({required String movie_id}) async {
+    var username = await FireAuth.getCurrentUser();
+    await FirebaseFirestore.instance
+        .collection('user_favorite')
+        .add({'username': username!.getUsername(), 'movie': movie_id});
+  }
+
+  static Future<void> DeleteUserFavorite(
+      {String? username, int? movie_id}) async {
+    // to do
+  }
+
+  static Future<void> buyTicket({required String ticketId}) async {
+    var user = await FireAuth.getCurrentUser();
+    var querySnapshot = await FirebaseFirestore.instance
+        .collection("user_ticket")
+        .doc(user!.getUsername())
+        .get();
+    // var tickets = querySnapshot.data()?["tickets"] as List<dynamic>;
+    await FirebaseFirestore.instance
+        .collection("user_ticket")
+        .doc(user.getUsername())
+        .set({
+      "tickets": [ticketId]
+    });
   }
 }
 

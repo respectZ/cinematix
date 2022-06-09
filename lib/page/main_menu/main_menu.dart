@@ -23,39 +23,11 @@ class _MainMenuState extends State<MainMenu> {
               (BuildContext context, AsyncSnapshot<List<Movie?>> snapshot) {
             if (!snapshot.hasError) {
               if (snapshot.hasData) {
-                var now = DateTime.now();
-                List<Widget> widgets_ongoing = [];
-                List<Widget> widgets_upcoming = [];
                 List<Movie?> movies = snapshot.data!;
-                List<Movie?> movies_ongoing = movies.where((element) {
-                  if (element!.getStartAiring() != null) {
-                    if (now.isAfter(element.getStartAiring()!) &&
-                        now.isBefore(element.getEndAiring()!)) {
-                      return true;
-                    }
-                  }
-                  return false;
-                }).toList();
-                List<Movie?> movies_upcoming = movies.where((element) {
-                  return element!.getStartAiring() == null ||
-                      now.isBefore(element.getStartAiring()!);
-                }).toList();
-                widgets_ongoing = movies_ongoing
-                    .map((e) => Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            image: DecorationImage(
-                                fit: BoxFit.cover,
-                                image: NetworkImage(e!.getImage())))))
-                    .toList();
-                widgets_upcoming = movies_upcoming
-                    .map((e) => Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            image: DecorationImage(
-                                fit: BoxFit.cover,
-                                image: NetworkImage(e!.getImage())))))
-                    .toList();
+                List<Movie?> movies_ongoing =
+                    movies.where((element) => element!.isAiring()).toList();
+                List<Movie?> movies_upcoming =
+                    movies.where((element) => !element!.isAiring()).toList();
                 return CinematixHome(
                     onGoing: movies_ongoing, upComing: movies_upcoming);
               } else {

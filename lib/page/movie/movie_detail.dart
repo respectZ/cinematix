@@ -17,6 +17,9 @@ import '../../model/movie.dart';
 
 import 'package:flutter/material.dart';
 
+String _formatAiring({required DateTime start, required DateTime end}) =>
+    "${start.day}/${start.month}/${start.year} - ${end.day}/${end.month}/${end.year}";
+
 class MovieDetailPage extends StatefulWidget {
   List<Movie> MovieList = [];
 
@@ -38,13 +41,18 @@ class _MovieDetailPageState extends State<MovieDetailPage>
   int _tabJadwalIndex = 0;
 
   List<Tab> JadwalList = [];
-  Future<List<Review?>> list_review = FireAuth.getReview(movie_id: 3);
+  List<String> months =
+      "Januari Februari Maret April Mei Juni Juli Agustus September Oktober November Desember"
+          .split(" ");
+  List<String> days = "Senin Selasa Rabu Kamis Jumat Sabtu Minggu".split(" ");
+  late Future<List<Review?>> list_review;
   Future<UserCinematix?> userCinematix = FireAuth.getCurrentUser();
 
   double _ratingBarMode = 1;
   TextEditingController reviewController = TextEditingController();
 
   late List<Widget> _listofreviewwidget;
+  late Movie movie;
 
   // Function util
   void _tabSection() {
@@ -80,7 +88,8 @@ class _MovieDetailPageState extends State<MovieDetailPage>
                     SizedBox(
                       height: 10,
                     ),
-                    Text("Second Sword Art Online: Progressive movie."),
+                    // Text(movie.getSchedule().toString()),
+                    Text(movie.getDescription().toString()),
                   ],
                 ),
               ),
@@ -182,7 +191,7 @@ class _MovieDetailPageState extends State<MovieDetailPage>
                     builder: (BuildContext context,
                         AsyncSnapshot<List<Review?>> snapshot) {
                       if (!snapshot.hasError) {
-                        if (snapshot.hasData) {
+                        if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                           List<Widget> list_rev = [];
                           List<Review?> list_review = snapshot.data!;
                           list_rev = list_review
@@ -218,7 +227,13 @@ class _MovieDetailPageState extends State<MovieDetailPage>
               controller: _tabJadwalController,
               isScrollable: true,
               labelColor: Colors.blue,
-              tabs: JadwalList,
+              tabs: movie
+                  .getSchedule()!
+                  .map((e) => Tab(
+                        text:
+                            "${(e["airing"] as Timestamp).toDate().day} ${months[(e["airing"] as Timestamp).toDate().month - 1]}\n${days[(e["airing"] as Timestamp).toDate().weekday - 1]}",
+                      ))
+                  .toList(),
             ),
           ),
           _tabJadwalContent()[_tabJadwalIndex],
@@ -232,27 +247,33 @@ class _MovieDetailPageState extends State<MovieDetailPage>
         _tabJadwalController.length,
         (_) => Column(
               children: List<Widget>.generate(
-                  4,
-                  (index) => JadwalBox(
-                        NamaRuangan: "Audi ${index + 1}",
-                        ListWaktu: List<DateTime>.generate(
-                            5, (index2) => DateTime.now()),
-                        callback: () => Get.toNamed("/movie_ticket"),
-                      )),
+                1,
+                (index) => JadwalBox(
+                  NamaRuangan: "Audi ${index + 1}",
+                  ListWaktu:
+                      List<DateTime>.generate(1, (index2) => DateTime.now()),
+                  callback: () => Get.toNamed("/movie_ticket"),
+                ),
+              ),
             ));
   }
 
   @override
   void initState() {
     super.initState();
+
+    movie = Get.arguments["movie"] as Movie;
+    list_review = FireAuth.getReview(movie_id: movie.getID());
+
     _tabMainController = TabController(length: 3, vsync: this);
     _tabMainController.addListener(_tabSection);
 
+    // need fetch from schedule
     JadwalList = List<Tab>.generate(
         7, (index) => Tab(text: "${index + 10} Maret\nSelasa"));
 
     _tabJadwalController =
-        TabController(length: JadwalList.length, vsync: this);
+        TabController(length: movie.getSchedule()!.length, vsync: this);
     _tabJadwalController.addListener(_tabSection);
   }
 
@@ -281,7 +302,7 @@ class _MovieDetailPageState extends State<MovieDetailPage>
         backgroundColor: Colors.white,
         elevation: 0,
         title: const Text(
-          "CINEMATIX",
+          "Detail Film",
           style: TextStyle(color: Color.fromARGB(255, 0, 166, 232)),
         ),
         centerTitle: false,
@@ -315,12 +336,12 @@ class _MovieDetailPageState extends State<MovieDetailPage>
                   decoration: BoxDecoration(
                     color: Colors.grey,
                     image: DecorationImage(
-                        colorFilter: ColorFilter.mode(
-                            Color.fromARGB(255, 255, 255, 255),
-                            BlendMode.darken),
-                        fit: BoxFit.fitHeight,
-                        image: NetworkImage(
-                            "https://cdn.myanimelist.net/s/common/uploaded_files/1635784561-2e7ef92151ba666376667b57500afbf9.jpeg")),
+                      colorFilter: ColorFilter.mode(
+                          Color.fromARGB(255, 255, 255, 255), BlendMode.darken),
+                      fit: BoxFit.fitHeight,
+                      image: NetworkImage(
+                          "https://cdn.myanimelist.net/s/common/uploaded_files/1635784561-2e7ef92151ba666376667b57500afbf9.jpeg"),
+                    ),
                     borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(10.0),
                       bottomRight: Radius.circular(10.0),
@@ -344,8 +365,7 @@ class _MovieDetailPageState extends State<MovieDetailPage>
                             decoration: BoxDecoration(
                               image: DecorationImage(
                                 fit: BoxFit.cover,
-                                image: NetworkImage(
-                                    "https://cdn.myanimelist.net/images/anime/1346/121728.jpg"),
+                                image: NetworkImage(movie.getImage()),
                               ),
                               borderRadius:
                                   BorderRadius.all(Radius.circular(15.0)),
@@ -361,7 +381,7 @@ class _MovieDetailPageState extends State<MovieDetailPage>
                               SizedBox(
                                 width: titleWidth,
                                 child: Text(
-                                  "Sword Art Online: Progressive Movie - Kuraki Yuuyami no Scherzo",
+                                  movie.getTitle(),
                                   style: TitleStyle,
                                 ),
                               ),
@@ -380,7 +400,9 @@ class _MovieDetailPageState extends State<MovieDetailPage>
                                   ),
                                   SizedBox(
                                     width: infoWidth,
-                                    child: Text("Unknown"),
+                                    child: Text(
+                                      movie.getDurationString(),
+                                    ),
                                   ),
                                 ],
                               ),
@@ -399,7 +421,7 @@ class _MovieDetailPageState extends State<MovieDetailPage>
                                   ),
                                   SizedBox(
                                     width: infoWidth,
-                                    child: Text("None"),
+                                    child: Text(movie.getRating()),
                                   ),
                                 ],
                               ),
@@ -418,7 +440,7 @@ class _MovieDetailPageState extends State<MovieDetailPage>
                                   ),
                                   SizedBox(
                                     width: infoWidth,
-                                    child: Text("Unknown"),
+                                    child: Text(movie.getDirector()),
                                   ),
                                 ],
                               ),
@@ -465,7 +487,11 @@ class _MovieDetailPageState extends State<MovieDetailPage>
                           SizedBox(
                             width: 5,
                           ),
-                          Text("10/03/2022 - 23/03/2022"),
+                          Text(
+                            _formatAiring(
+                                start: movie.getStartAiring()!,
+                                end: movie.getEndAiring()!),
+                          ),
                         ],
                       ),
                       SizedBox(
@@ -478,7 +504,7 @@ class _MovieDetailPageState extends State<MovieDetailPage>
                           color: Colors.blue,
                         ),
                         child: Text(
-                          "Sedang Tayang",
+                          movie.isAiring() ? "Sedang Tayang" : "Upcoming",
                           style: TextStyle(color: Colors.white),
                         ),
                       ),
@@ -497,8 +523,9 @@ class _MovieDetailPageState extends State<MovieDetailPage>
                               : Icons.favorite_border_rounded,
                           color: Colors.blue,
                         ),
-                        onPressed: (() {
+                        onPressed: (() async {
                           // isFavorite = !isFavorite;
+                          FireAuth.AddUserFavorite(movie_id: movie.getID());
                           setState(() {
                             isFavorite = !isFavorite;
                           });

@@ -16,7 +16,9 @@ import 'package:get/get.dart';
 Widget movieToWidget({required Movie? movie}) {
   return InkWell(
     onTap: () async {
-      Get.toNamed("/movie_detail");
+      Get.toNamed("/movie_detail", arguments: {
+        "movie": movie,
+      });
     },
     child: Container(
       decoration: BoxDecoration(

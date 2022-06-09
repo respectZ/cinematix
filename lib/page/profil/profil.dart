@@ -168,7 +168,7 @@ class _ProfilState extends State<Profil> {
                   // SizedBox(width: 80,),
 
                   IconButton(
-                      onPressed: () => Get.to("profil/favorit_saya"),
+                      onPressed: () => Get.toNamed("profile/favorite"),
                       iconSize: 30,
                       icon: Icon(Icons.arrow_forward))
 
