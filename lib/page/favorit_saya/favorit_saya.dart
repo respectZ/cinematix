@@ -19,7 +19,23 @@ class FavoritSaya extends StatelessWidget {
         backgroundColor: Colors.white,
         title: Text("Favorit Saya"),
       ),
-      body: Column(
+      body: StreamBuilder<QuerySnapshot<Object?>>(
+        stream: controller.streamData(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.active) {
+            var ListAllDocs = snapshot.data!.docs;
+            return ListView.builder(
+              itemBuilder: (context, index) => ListTile(
+                title: Text(
+                  '${(ListAllDocs[index].data() as Map<String, dynamic>) ['Movie']}',
+                  style: TextStyle(fontSize: 20),),
+
+                  subtitle: Text( '${(ListAllDocs[index].data() as Map<String, dynamic>) ['status']}',
+                  style: TextStyle(fontSize: 10),)
+              ),);
+          };
+        })
+      /*Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Card(
@@ -110,7 +126,7 @@ class FavoritSaya extends StatelessWidget {
             ),
           )
         ],
-      ),
+      ),*/,
       bottomNavigationBar: const CinematixBar(),
     );
   }
