@@ -27,7 +27,7 @@ class FavoritSaya extends StatelessWidget {
             return ListView.builder(
               itemBuilder: (context, index) => ListTile(
                 title: Text(
-                  '${(ListAllDocs[index].data() as Map<String, dynamic>) ['Movie']}',
+                  '${(ListAllDocs[index].data() as Map<String, dynamic>) ['movie']}',
                   style: TextStyle(fontSize: 20),),
 
                   subtitle: Text( '${(ListAllDocs[index].data() as Map<String, dynamic>) ['status']}',
