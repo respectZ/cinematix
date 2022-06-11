@@ -11,7 +11,7 @@ class Movie {
   final String __rating;
   final int __happiness;
   final int __length;
-  List<dynamic>? __schedule;
+  Object? __schedule;
   DateTime? __start_airing;
   DateTime? __end_airing;
 
@@ -58,7 +58,7 @@ class Movie {
       start_airing: json['start_airing'] as Timestamp?,
       end_airing: json['end_airing'] as Timestamp?);
 
-  List<dynamic>? getSchedule() => __schedule;
+  Object? getSchedule() => __schedule;
   bool isAiring() =>
       DateTime.now().isAfter(__start_airing!) &&
       DateTime.now().isBefore(__end_airing!);
@@ -90,135 +90,59 @@ class Movie {
     } else {
       List<Movie> movies = [];
 
-      // get cinema room where cinema = cinema_id
-      var b = await CinematixFirestore.findByReference(
-          collection_name: "cinema_room",
+      // get all from cinema_movie where cinema = cinema
+      var _movies = await CinematixFirestore.findByReference(
+          collection_name: "cinema_movie",
           reference_name: "cinema",
           reference_value: cinema_id);
-
-      List<Map<String, dynamic>> cinema_rooms =
-          await CinematixFirestore.findByReference(
-              collection_name: "cinema_room",
-              reference_name: "cinema",
-              reference_value: cinema_id);
-      for (Map<String, dynamic> cinema_room in cinema_rooms) {
-        // get cinema_chair where cinema_room = cinema_room_id
-        var c = await CinematixFirestore.findByReference(
-            collection_name: "cinema_chair",
-            reference_name: "cinema_room",
-            reference_value: cinema_room["id"]);
-
-        // print(c.toString());
-        List<Map<String, dynamic>> cinema_room_movies =
-            await CinematixFirestore.findByReference(
-                collection_name: "cinema_movie",
-                reference_name: "cinema_room",
-                reference_value: cinema_room["id"]);
-        if (cinema_room_movies.isNotEmpty) {
-          // movie still instance of cinema_movie, need to convert instance of movie
-          for (Map<String, dynamic> cinema_room_movie in cinema_room_movies) {
-            var _temp =
-                await (cinema_room_movie["movie"] as DocumentReference).get();
-            /*
-                get schedule, where cinema_movie ==
-                then get cinema_room
-                then get ticket
-                */
-            // schedule airing
-            var schedules = await CinematixFirestore.findByReference(
-                collection_name: "schedule",
-                reference_name: "cinema_movie",
-                reference_value: cinema_room_movie["id"]);
-            // get cinema room where cinema = cinema_id
-            // var b = await CinematixFirestore.findByReference(
-            //     collection_name: "cinema_room",
-            //     reference_name: "cinema",
-            //     reference_value: cinema_id);
-            // get cinema_chair where cinema_room = cinema_room_id
-            // var c = await CinematixFirestore.findByReference(
-            //     collection_name: "cinema_chair",
-            //     reference_name: "cinema_room",
-            //     reference_value: cinema_room["id"]);
-            // get ticket where cinema_chair = cinema_chair_id
-            // print(a.toString());
-            // print(cinema_room_movie["id"]);
-            // print(a.toString());
-            // print(b.toString());
-            // need to get ticket equal schedule & cinema_chair nooooooo
-            List<dynamic> tickets = [];
-            for (var schedule in schedules) {
-              for (var chair in c) {
-                var resTickets = await FirebaseFirestore.instance
-                    .collection('ticket')
-                    .where('cinema_chair',
-                        isEqualTo: FirebaseFirestore.instance
-                            .doc("cinema_chair/${chair['id']}"))
-                    .where('schedule',
-                        isEqualTo: FirebaseFirestore.instance
-                            .doc("schedule/${schedule['id']}"))
-                    .get();
-                tickets.add(resTickets.docs.map((e) => e.data()) as Object);
+      // get cinema_chair
+      var cinema_chairs = await CinematixFirestore.findByReference(
+          collection_name: "cinema_chair",
+          reference_name: "cinema",
+          reference_value: cinema_id);
+      for (var movie in _movies) {
+        // movieData = isi dari movie[jujustu_kaisen_0]
+        var movieData =
+            (await (movie["movie"] as DocumentReference).get()).data();
+        Movie mv = Movie.fromJSON({
+          "id": movie["id"],
+          "start_airing": movie["start_airing"],
+          "end_airing": movie["end_airing"],
+          ...(movieData as Map<String, dynamic>)
+        });
+        movies.add(mv);
+      }
+      /*
+      get cinema_chair where cinema_room equal
+      get ticket where schedule = schedule, cinema_chair =cinema_chair
+      */
+      /*
+            problem: how the structure ?
+            schedule: {
+              audi #1: {
+                "airing": airing,
+                "tickets": []
               }
             }
-            // var d = await CinematixFirestore.findByReference(collection_name: "ticket", reference_name: "cinema_chair", reference_value: );
-            // var d = await CinematixFirestore.findByReference(
-            //     collection_name: "ticket",
-            //     reference_name: "cinema_chair",
-            //     reference_value: cinema_room_movie["id"]);
-            List<dynamic> schedule = schedules.map((e) {
-              return {
-                "airing": (e as Map<String, dynamic>)["airing"],
-                "room": b,
-                "ticket": tickets,
-              };
-            }).toList();
-            // print(schedule.toString());
-            Movie movie = Movie.fromJSON({
-              "id": _temp.id,
-              "start_airing": cinema_room_movie["start_airing"],
-              "end_airing": cinema_room_movie["end_airing"],
-              "schedule": schedule,
-              ..._temp.data() as Map<String, dynamic>
-            });
-            // need get schedule
-            /*
-            also need to get user_ticket, check is sold or not
-            "schedule": [
-              {
-                "airing": datetime,
-                "room": audi,
-                "ticket": [
-                  {
-                    "kursi": cinema_chair_id,
-                    "harga": "450000"
-                  }
-                ]
-              }
-            ]
-
-            "schedule": [
-              {
-                "airing": datetime,
-                "room": [],
-                "ticket": [
-                  {
-                    "kursi": cinema_chair_id,
-                    "harga": 450000
-                  }
-                ]
-              }
-            ]
-
-            trus foreach room = audi, get it, display if its not in schedule 
-            or
-            foreach room = audi, get kursi -> display
             */
-            movies.add(movie);
-          }
-        }
-      }
       print(movies.toString());
       return movies;
+    }
+  }
+
+  static Future<void> getMovieSchedule(
+      {required String movieID, required String cinemaID}) async {
+    var cinema_rooms = await CinematixFirestore.findByReference(
+        collection_name: "cinema_room",
+        reference_name: "cinema",
+        reference_value: cinemaID);
+    var cc = [];
+    for (var cinema_room in cinema_rooms) {
+      var chairs = await CinematixFirestore.findByReference(
+          collection_name: "cinema_chair",
+          reference_name: "cinema_room",
+          reference_value: cinema_room["id"]);
+      cc.add(chairs);
     }
   }
 }

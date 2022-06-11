@@ -159,7 +159,7 @@ class FireAuth {
   }
 
   static Future<void> addReview(
-      {required int? movie_id,
+      {required String movie_id,
       required String? user_email,
       required double? star_rating,
       required String? comment}) async {

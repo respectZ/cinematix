@@ -88,8 +88,8 @@ class _MovieDetailPageState extends State<MovieDetailPage>
                     SizedBox(
                       height: 10,
                     ),
-                    // Text(movie.getSchedule().toString()),
-                    Text(movie.getDescription().toString()),
+                    Text(movie.getSchedule().toString()),
+                    // Text(movie.getDescription().toString()),
                   ],
                 ),
               ),
@@ -164,7 +164,7 @@ class _MovieDetailPageState extends State<MovieDetailPage>
 
                                   try {
                                     FireAuth.addReview(
-                                        movie_id: 3,
+                                        movie_id: movie.getID(),
                                         user_email: snapshot.data!.getEmail(),
                                         star_rating: _ratingBarMode,
                                         comment: reviewController.text);
@@ -224,21 +224,39 @@ class _MovieDetailPageState extends State<MovieDetailPage>
           Container(
             margin: EdgeInsets.fromLTRB(12.0, 0.0, 0.0, 0.0),
             child: TabBar(
-              controller: _tabJadwalController,
-              isScrollable: true,
-              labelColor: Colors.blue,
-              tabs: movie
-                  .getSchedule()!
-                  .map((e) => Tab(
-                        text:
-                            "${(e["airing"] as Timestamp).toDate().day} ${months[(e["airing"] as Timestamp).toDate().month - 1]}\n${days[(e["airing"] as Timestamp).toDate().weekday - 1]}",
-                      ))
-                  .toList(),
-            ),
+                controller: _tabJadwalController,
+                isScrollable: true,
+                labelColor: Colors.blue,
+                tabs: [
+                  Tab(
+                    text: "11 Juni\nSabtu",
+                  )
+                ]),
           ),
           _tabJadwalContent()[_tabJadwalIndex],
         ],
       ),
+      // Column(
+      //   crossAxisAlignment: CrossAxisAlignment.start,
+      //   children: [
+      //     Container(
+      //       margin: EdgeInsets.fromLTRB(12.0, 0.0, 0.0, 0.0),
+      //       child: TabBar(
+      //         controller: _tabJadwalController,
+      //         isScrollable: true,
+      //         labelColor: Colors.blue,
+      //         tabs: movie
+      //             .getSchedule()!
+      //             .map((e) => Tab(
+      //                   text:
+      //                       "${(e["airing"] as Timestamp).toDate().day} ${months[(e["airing"] as Timestamp).toDate().month - 1]}\n${days[(e["airing"] as Timestamp).toDate().weekday - 1]}",
+      //                 ))
+      //             .toList(),
+      //       ),
+      //     ),
+      //     _tabJadwalContent()[_tabJadwalIndex],
+      //   ],
+      // ),
     ];
   }
 
@@ -272,8 +290,9 @@ class _MovieDetailPageState extends State<MovieDetailPage>
     JadwalList = List<Tab>.generate(
         7, (index) => Tab(text: "${index + 10} Maret\nSelasa"));
 
-    _tabJadwalController =
-        TabController(length: movie.getSchedule()!.length, vsync: this);
+    // _tabJadwalController =
+    //     TabController(length: movie.getSchedule()!.length, vsync: this);
+    _tabJadwalController = TabController(length: 1, vsync: this);
     _tabJadwalController.addListener(_tabSection);
   }
 

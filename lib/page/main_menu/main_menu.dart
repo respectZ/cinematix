@@ -29,7 +29,9 @@ class _MainMenuState extends State<MainMenu> {
                 List<Movie?> movies_upcoming =
                     movies.where((element) => !element!.isAiring()).toList();
                 return CinematixHome(
-                    onGoing: movies_ongoing, upComing: movies_upcoming);
+                    onGoing: movies_ongoing,
+                    upComing: movies_upcoming,
+                    cinemaID: "ChIJJ3jvqetXeC4R7W8Ltg_dgdA");
               } else {
                 return Container();
               }

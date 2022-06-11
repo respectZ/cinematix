@@ -1,6 +1,7 @@
 import 'dart:ffi';
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../widget/cinematix_bar.dart';
@@ -19,22 +20,26 @@ class FavoritSaya extends StatelessWidget {
         backgroundColor: Colors.white,
         title: Text("Favorit Saya"),
       ),
-      body: StreamBuilder<QuerySnapshot<Object?>>(
-        stream: controller.streamData(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.active) {
-            var ListAllDocs = snapshot.data!.docs;
-            return ListView.builder(
-              itemBuilder: (context, index) => ListTile(
-                title: Text(
-                  '${(ListAllDocs[index].data() as Map<String, dynamic>) ['movie']}',
-                  style: TextStyle(fontSize: 20),),
-
-                  subtitle: Text( '${(ListAllDocs[index].data() as Map<String, dynamic>) ['status']}',
-                  style: TextStyle(fontSize: 10),)
-              ),);
-          };
-        })
+      // body: FutureBuilder<>
+      // body: StreamBuilder<QuerySnapshot<Object?>>(
+      //     stream: controller.streamData(),
+      //     builder: (context, snapshot) {
+      //       if (snapshot.connectionState == ConnectionState.active) {
+      //         var ListAllDocs = snapshot.data!.docs;
+      //         return ListView.builder(
+      //           itemBuilder: (context, index) => ListTile(
+      //               title: Text(
+      //                 '${(ListAllDocs[index].data() as Map<String, dynamic>)['movie']}',
+      //                 style: TextStyle(fontSize: 20),
+      //               ),
+      //               subtitle: Text(
+      //                 '${(ListAllDocs[index].data() as Map<String, dynamic>)['status']}',
+      //                 style: TextStyle(fontSize: 10),
+      //               )),
+      //         );
+      //       }
+      //       ;
+      //     })
       /*Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -126,7 +131,8 @@ class FavoritSaya extends StatelessWidget {
             ),
           )
         ],
-      ),*/,
+      ),*/
+      // ,
       bottomNavigationBar: const CinematixBar(),
     );
   }

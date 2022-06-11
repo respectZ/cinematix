@@ -13,11 +13,12 @@ import 'package:cinematix/model/movie.dart';
 
 import 'package:get/get.dart';
 
-Widget movieToWidget({required Movie? movie}) {
+Widget movieToWidget({required Movie? movie, required String cinemaID}) {
   return InkWell(
     onTap: () async {
       Get.toNamed("/movie_detail", arguments: {
         "movie": movie,
+        "cinemaID": cinemaID,
       });
     },
     child: Container(
@@ -43,10 +44,15 @@ Future<List<SearchResult>?> _searchPlaces(
 }
 
 class CinematixHome extends StatefulWidget {
-  CinematixHome({Key? key, required this.onGoing, required this.upComing})
+  CinematixHome(
+      {Key? key,
+      required this.onGoing,
+      required this.upComing,
+      required this.cinemaID})
       : super(key: key);
   final List<Movie?> onGoing;
   final List<Movie?> upComing;
+  final String cinemaID;
 
   @override
   _CinematixHomeState createState() => _CinematixHomeState();
@@ -191,8 +197,9 @@ class _CinematixHomeState extends State<CinematixHome>
                         return Container(
                           margin: EdgeInsets.only(left: 5, right: 5),
                           alignment: Alignment.center,
-                          child:
-                              movieToWidget(movie: _filmList[_tabIndex][index]),
+                          child: movieToWidget(
+                              movie: _filmList[_tabIndex][index],
+                              cinemaID: widget.cinemaID),
                           decoration: BoxDecoration(
                               color: Colors.amber,
                               borderRadius: BorderRadius.circular(15)),

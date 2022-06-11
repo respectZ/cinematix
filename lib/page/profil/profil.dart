@@ -197,7 +197,7 @@ class _ProfilState extends State<Profil> {
 
                     // SizedBox(width: 80,),
                     IconButton(
-                        onPressed: () => Get.toNamed("profil/voucher_saya"),
+                        onPressed: () => Get.toNamed("profile/voucher"),
                         iconSize: 30,
                         icon: Icon(Icons.arrow_forward))
 

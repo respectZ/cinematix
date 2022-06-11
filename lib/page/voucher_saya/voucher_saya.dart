@@ -12,12 +12,20 @@ class VoucherSaya extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Icon(Icons.arrow_back),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.black45,
+          ),
+        ),
         iconTheme: IconThemeData(color: Colors.blue),
         backgroundColor: Colors.white,
         title: Text(
           "Voucher Saya",
-          style: TextStyle(color: Colors.grey),
+          style: TextStyle(color: Colors.blue),
         ),
       ),
       body: Column(
