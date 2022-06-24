@@ -134,7 +134,6 @@ class FireAuth {
     // Find from users where email = email
     users = users.where((element) => element["email"] == user.email).toList();
     var _user = users[0];
-    print(user.phoneNumber == "");
     UserCinematix userCinematix = UserCinematix(
         username: _user["id"],
         name: user.displayName ?? _user["nama"] ?? "undefined",
@@ -205,6 +204,49 @@ class FireAuth {
   static Future<void> DeleteUserFavorite(
       {String? username, int? movie_id}) async {
     // to do
+  }
+
+  static Future<bool> toggleUserFavorite({required String movie_id}) async {
+    var username = (await getCurrentUser())!.getUsername();
+    var favorites =
+        await FirebaseFirestore.instance.collection("user").doc(username).get();
+    var favoritesData = favorites.data()!["favorites"] as List<dynamic>;
+    var _movie = FirebaseFirestore.instance.doc("movie/${movie_id}");
+    bool res = false;
+    if (favoritesData.contains(_movie)) {
+      favoritesData.remove(_movie);
+    } else {
+      favoritesData.add(_movie);
+      res = true;
+    }
+    await FirebaseFirestore.instance
+        .collection("user")
+        .doc(username)
+        .update({"favorites": favoritesData});
+    return res;
+  }
+
+  static Future<bool> isUserFavorite({required String movie_id}) async {
+    var username = (await getCurrentUser())!.getUsername();
+    // cek dulu kalo di document udh punya / blm
+    var favorites =
+        await FirebaseFirestore.instance.collection("user").doc(username).get();
+    if (favorites.data()!["favorites"] == null) {
+      await FirebaseFirestore.instance
+          .collection("user")
+          .doc(username)
+          .update({"favorites": []});
+      return false;
+    } else {
+      var _movie = FirebaseFirestore.instance.doc("movie/${movie_id}");
+      if ((favorites.data()!["favorites"] as List).contains(_movie)) {
+        return true;
+      }
+      return false;
+    }
+    // bikin doc baru
+
+    // get, append movie ke array list
   }
 
   static Future<void> buyTicket({required String ticketId}) async {

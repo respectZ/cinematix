@@ -34,7 +34,7 @@ class _MovieDetailPageState extends State<MovieDetailPage>
   TextStyle TitleStyle =
       TextStyle(color: Colors.black, fontWeight: FontWeight.bold);
   // some variables ?
-  bool isFavorite = true;
+  late Future<bool> isFavorite;
   late TabController _tabMainController;
   late TabController _tabJadwalController;
   int _tabMainIndex = 0;
@@ -282,6 +282,7 @@ class _MovieDetailPageState extends State<MovieDetailPage>
 
     movie = Get.arguments["movie"] as Movie;
     list_review = FireAuth.getReview(movie_id: movie.getID());
+    isFavorite = FireAuth.isUserFavorite(movie_id: movie.getID());
 
     _tabMainController = TabController(length: 3, vsync: this);
     _tabMainController.addListener(_tabSection);
@@ -533,29 +534,64 @@ class _MovieDetailPageState extends State<MovieDetailPage>
                     alignment: Alignment.centerRight,
                     child: Container(
                       margin: EdgeInsets.fromLTRB(0.0, 4.0, 12.0, 0.0),
-                      child: IconButton(
-                        iconSize: 48.0,
-                        padding: EdgeInsets.zero,
-                        icon: Icon(
-                          isFavorite
-                              ? Icons.favorite_rounded
-                              : Icons.favorite_border_rounded,
-                          color: Colors.blue,
-                        ),
-                        onPressed: (() async {
-                          // isFavorite = !isFavorite;
-                          FireAuth.AddUserFavorite(movie_id: movie.getID());
-                          setState(() {
-                            isFavorite = !isFavorite;
-                          });
-                          final _snackBar = SnackBar(
-                            content: Text(isFavorite
-                                ? "Telah ditambahkan ke favorit"
-                                : "Telah dihapus dari favorit"),
-                          );
-                          ScaffoldMessenger.of(context).showSnackBar(_snackBar);
-                        }),
+                      child: FutureBuilder(
+                        future: isFavorite,
+                        builder: (BuildContext context,
+                            AsyncSnapshot<bool?> snapshot) {
+                          if (snapshot.hasData) {
+                            return IconButton(
+                                onPressed: () async {
+                                  String msg = "";
+                                  if (snapshot.data!) {
+                                    msg = "Film telah dihapus dari favorit";
+                                  } else {
+                                    msg = "Film telah ditambahkan ke favorit";
+                                  }
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text(msg)));
+                                  setState(() {
+                                    isFavorite = FireAuth.toggleUserFavorite(
+                                        movie_id: movie.getID());
+                                  });
+                                },
+                                icon: Icon(
+                                  snapshot.data!
+                                      ? Icons.favorite_rounded
+                                      : Icons.favorite_border_rounded,
+                                  color: Colors.blue,
+                                ));
+                          }
+                          return IconButton(
+                              onPressed: () {},
+                              icon: Icon(
+                                Icons.favorite_rounded,
+                                color: Colors.blue,
+                              ));
+                        },
                       ),
+                      // child: IconButton(
+                      //   iconSize: 48.0,
+                      //   padding: EdgeInsets.zero,
+                      //   icon: Icon(
+                      //     isFavorite
+                      //         ? Icons.favorite_rounded
+                      //         : Icons.favorite_border_rounded,
+                      //     color: Colors.blue,
+                      //   ),
+                      //   onPressed: (() async {
+                      //     // isFavorite = !isFavorite;
+                      //     FireAuth.AddUserFavorite(movie_id: movie.getID());
+                      //     setState(() {
+                      //       isFavorite = !isFavorite;
+                      //     });
+                      //     final _snackBar = SnackBar(
+                      //       content: Text(isFavorite
+                      //           ? "Telah ditambahkan ke favorit"
+                      //           : "Telah dihapus dari favorit"),
+                      //     );
+                      //     ScaffoldMessenger.of(context).showSnackBar(_snackBar);
+                      //   }),
+                      // ),
                     ),
                   ),
                 ],
