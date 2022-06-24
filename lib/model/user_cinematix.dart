@@ -1,3 +1,8 @@
+import 'dart:io';
+
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+
 class UserCinematix {
   final String __username;
   final String __name;
@@ -34,4 +39,15 @@ class UserCinematix {
   String getEmail() => __email;
   String getPassword() => __password;
   String? getPhoto() => __photo;
+
+  Future<void> uploadPhoto({required String path}) async {
+    final storage = FirebaseStorage.instance.ref();
+    File file = File(path);
+    final ext = path.split(".")[path.split(".").length - 1];
+    final uploadPath = "images/profile/" + getUsername() + "." + ext;
+    var res = await storage.child(uploadPath).putFile(file);
+    User? user = FirebaseAuth.instance.currentUser;
+    await user!.updatePhotoURL(
+        await FirebaseStorage.instance.ref(uploadPath).getDownloadURL());
+  }
 }

@@ -20,7 +20,7 @@ class Profil extends StatefulWidget {
 }
 
 class _ProfilState extends State<Profil> {
-  XFile? photoProfile;
+  ImageProvider<Object>? filePhotoProfile;
 
   Future<UserCinematix?> userCinematix = FireAuth.getCurrentUser();
 
@@ -68,46 +68,77 @@ class _ProfilState extends State<Profil> {
                     Stack(
                       children: [
                         // Avatar
-                        CircleAvatar(
-                          backgroundColor: Colors.grey,
-                          radius: 40.0,
-                          backgroundImage: photoProfile != null
-                              ? Image.file(File(photoProfile!.path)).image
-                              : null,
-                          // child: Image.asset('ria'),
-                          child: photoProfile != null
-                              ? null
-                              : Icon(Icons.person_rounded),
-                        ),
-                        Positioned(
-                            bottom: -10.0,
-                            right: -2.0,
-                            child: InkWell(
-                                onTap: () {
-                                  showModalBottomSheet(
-                                    context: context,
-                                    builder: ((builder) => _bottomSheet(
-                                        context: context,
-                                        picker: _picker,
-                                        callback: (XFile? xFile) =>
-                                            setState(() {
-                                              photoProfile =
-                                                  xFile ?? photoProfile;
-                                            }))),
-                                  );
-                                },
-                                child: Container(
-                                  height: 50.0,
-                                  width: 25.0,
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Colors.white),
-                                  child: Icon(
-                                    Icons.camera_alt,
-                                    color: Colors.blue,
-                                    size: 17.0,
-                                  ),
-                                )))
+                        FutureBuilder<UserCinematix?>(
+                            future: userCinematix,
+                            builder: (BuildContext context,
+                                AsyncSnapshot<UserCinematix?> snapshot) {
+                              if (filePhotoProfile == null &&
+                                  snapshot.hasData &&
+                                  snapshot.data!.getPhoto() != null) {
+                                return CircleAvatar(
+                                  backgroundColor: Colors.grey,
+                                  radius: 40.0,
+                                  backgroundImage:
+                                      NetworkImage(snapshot.data!.getPhoto()!),
+                                );
+                              }
+                              return CircleAvatar(
+                                backgroundColor: Colors.grey,
+                                radius: 40.0,
+                                backgroundImage: filePhotoProfile,
+                                child: filePhotoProfile != null
+                                    ? null
+                                    : Icon(Icons.person_rounded),
+                              );
+                            }),
+                        // CircleAvatar(
+                        //   backgroundColor: Colors.grey,
+                        //   radius: 40.0,
+                        //   backgroundImage: filePhotoProfile,
+                        //   child: filePhotoProfile != null
+                        //       ? null
+                        //       : Icon(Icons.person_rounded),
+                        // ),
+                        FutureBuilder<UserCinematix?>(
+                            future: userCinematix,
+                            builder: (BuildContext context,
+                                AsyncSnapshot<UserCinematix?> snapshot) {
+                              return Positioned(
+                                  bottom: -10.0,
+                                  right: -2.0,
+                                  child: InkWell(
+                                      onTap: () {
+                                        showModalBottomSheet(
+                                          context: context,
+                                          builder: ((builder) => _bottomSheet(
+                                              context: context,
+                                              picker: _picker,
+                                              callback: (XFile? xFile) async {
+                                                if (snapshot.hasData) {
+                                                  snapshot.data!.uploadPhoto(
+                                                      path: xFile!.path);
+                                                }
+                                                setState(() {
+                                                  filePhotoProfile = Image.file(
+                                                          File(xFile!.path))
+                                                      .image;
+                                                });
+                                              })),
+                                        );
+                                      },
+                                      child: Container(
+                                        height: 50.0,
+                                        width: 25.0,
+                                        decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Colors.white),
+                                        child: Icon(
+                                          Icons.camera_alt,
+                                          color: Colors.blue,
+                                          size: 17.0,
+                                        ),
+                                      )));
+                            }),
                       ],
                     ),
                     SizedBox(
