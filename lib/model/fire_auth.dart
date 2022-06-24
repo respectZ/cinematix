@@ -134,11 +134,13 @@ class FireAuth {
     // Find from users where email = email
     users = users.where((element) => element["email"] == user.email).toList();
     var _user = users[0];
-
+    print(user.phoneNumber == "");
     UserCinematix userCinematix = UserCinematix(
         username: _user["id"],
         name: user.displayName ?? _user["nama"] ?? "undefined",
-        phone: user.phoneNumber ?? _user["phone"] ?? "undefined",
+        phone: ((user.phoneNumber == "" || user.phoneNumber == null)
+            ? _user["phone"]
+            : "undefined"),
         email: user.email ?? "undefined",
         photo: user.photoURL,
         password: "-");
