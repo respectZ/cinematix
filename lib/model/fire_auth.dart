@@ -147,16 +147,21 @@ class FireAuth {
   }
 
   static Future<void> updateUser(
-      {String? displayName,
-      String? photoURL,
-      PhoneAuthCredential? phoneCredential}) async {
+      {String? displayName, String? photoURL, String? phoneCredential}) async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       return;
     }
     if (displayName != null) user.updateDisplayName(displayName);
     if (photoURL != null) user.updatePhotoURL(photoURL);
-    if (phoneCredential != null) await user.updatePhoneNumber(phoneCredential);
+    if (phoneCredential != null) {
+      // await user.updatePhoneNumber(phoneCredential);
+      var username = (await getCurrentUser())!.getUsername();
+      await FirebaseFirestore.instance
+          .collection("user")
+          .doc(username)
+          .update({"phone": phoneCredential});
+    }
   }
 
   static Future<void> addReview(

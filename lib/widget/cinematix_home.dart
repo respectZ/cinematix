@@ -134,7 +134,13 @@ class _CinematixHomeState extends State<CinematixHome>
                 );
               }),
           IconButton(
-            onPressed: () => Get.toNamed("/profile"),
+            onPressed: () {
+              Get.toNamed("/profile")?.then((value) {
+                setState(() {
+                  userCinematix = FireAuth.getCurrentUser();
+                });
+              });
+            },
             icon: const Icon(
               Icons.person_outline,
               color: Colors.black87,

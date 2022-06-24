@@ -12,6 +12,9 @@ import 'package:cinematix/model/fire_auth.dart';
 import 'package:cinematix/model/user_cinematix.dart';
 import 'package:shimmer/shimmer.dart';
 
+bool _validateNomorHP(String nomor_hp) =>
+    RegExp(r"[0-9]{10,14}$").hasMatch(nomor_hp);
+
 class Profil extends StatefulWidget {
   Profil({Key? key}) : super(key: key);
 
@@ -21,10 +24,12 @@ class Profil extends StatefulWidget {
 
 class _ProfilState extends State<Profil> {
   ImageProvider<Object>? filePhotoProfile;
-
   Future<UserCinematix?> userCinematix = FireAuth.getCurrentUser();
-
   final ImagePicker _picker = ImagePicker();
+  bool isEditing = false;
+  TextEditingController c_namaLengkap = TextEditingController();
+  TextEditingController c_nomorHP = TextEditingController();
+  int statusName = 0;
 
   @override
   void setState(VoidCallback fn) {
@@ -53,162 +58,252 @@ class _ProfilState extends State<Profil> {
           style: TextStyle(color: Colors.blue),
         ),
       ),
-      body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Container(
-            padding: EdgeInsets.only(
-              top: 20,
-              bottom: 30,
-              left: 30,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Stack(
-                      children: [
-                        // Avatar
-                        FutureBuilder<UserCinematix?>(
-                            future: userCinematix,
-                            builder: (BuildContext context,
-                                AsyncSnapshot<UserCinematix?> snapshot) {
-                              if (filePhotoProfile == null &&
-                                  snapshot.hasData &&
-                                  snapshot.data!.getPhoto() != null) {
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+              padding: EdgeInsets.only(
+                top: 20,
+                bottom: 30,
+                left: 30,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Stack(
+                        children: [
+                          // Avatar
+                          FutureBuilder<UserCinematix?>(
+                              future: userCinematix,
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<UserCinematix?> snapshot) {
+                                if (filePhotoProfile == null &&
+                                    snapshot.hasData &&
+                                    snapshot.data!.getPhoto() != null) {
+                                  return CircleAvatar(
+                                    backgroundColor: Colors.grey,
+                                    radius: 40.0,
+                                    backgroundImage: NetworkImage(
+                                        snapshot.data!.getPhoto()!),
+                                  );
+                                }
                                 return CircleAvatar(
                                   backgroundColor: Colors.grey,
                                   radius: 40.0,
-                                  backgroundImage:
-                                      NetworkImage(snapshot.data!.getPhoto()!),
+                                  backgroundImage: filePhotoProfile,
+                                  child: filePhotoProfile != null
+                                      ? null
+                                      : Icon(Icons.person_rounded),
                                 );
-                              }
-                              return CircleAvatar(
-                                backgroundColor: Colors.grey,
-                                radius: 40.0,
-                                backgroundImage: filePhotoProfile,
-                                child: filePhotoProfile != null
-                                    ? null
-                                    : Icon(Icons.person_rounded),
-                              );
-                            }),
-                        // CircleAvatar(
-                        //   backgroundColor: Colors.grey,
-                        //   radius: 40.0,
-                        //   backgroundImage: filePhotoProfile,
-                        //   child: filePhotoProfile != null
-                        //       ? null
-                        //       : Icon(Icons.person_rounded),
-                        // ),
-                        FutureBuilder<UserCinematix?>(
+                              }),
+                          // CircleAvatar(
+                          //   backgroundColor: Colors.grey,
+                          //   radius: 40.0,
+                          //   backgroundImage: filePhotoProfile,
+                          //   child: filePhotoProfile != null
+                          //       ? null
+                          //       : Icon(Icons.person_rounded),
+                          // ),
+                          FutureBuilder<UserCinematix?>(
+                              future: userCinematix,
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<UserCinematix?> snapshot) {
+                                return Positioned(
+                                    bottom: -10.0,
+                                    right: -2.0,
+                                    child: InkWell(
+                                        onTap: () {
+                                          showModalBottomSheet(
+                                            context: context,
+                                            builder: ((builder) => _bottomSheet(
+                                                context: context,
+                                                picker: _picker,
+                                                callback: (XFile? xFile) async {
+                                                  if (snapshot.hasData) {
+                                                    snapshot.data!.uploadPhoto(
+                                                        path: xFile!.path);
+                                                  }
+                                                  setState(() {
+                                                    filePhotoProfile =
+                                                        Image.file(File(
+                                                                xFile!.path))
+                                                            .image;
+                                                  });
+                                                })),
+                                          );
+                                        },
+                                        child: Container(
+                                          height: 50.0,
+                                          width: 25.0,
+                                          decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Colors.white),
+                                          child: Icon(
+                                            Icons.camera_alt,
+                                            color: Colors.blue,
+                                            size: 17.0,
+                                          ),
+                                        )));
+                              }),
+                        ],
+                      ),
+                      SizedBox(
+                        width: 40,
+                      ),
+                      // Nama & no hp
+                      Expanded(
+                        child: FutureBuilder<UserCinematix?>(
                             future: userCinematix,
                             builder: (BuildContext context,
                                 AsyncSnapshot<UserCinematix?> snapshot) {
-                              return Positioned(
-                                  bottom: -10.0,
-                                  right: -2.0,
-                                  child: InkWell(
-                                      onTap: () {
-                                        showModalBottomSheet(
-                                          context: context,
-                                          builder: ((builder) => _bottomSheet(
-                                              context: context,
-                                              picker: _picker,
-                                              callback: (XFile? xFile) async {
-                                                if (snapshot.hasData) {
-                                                  snapshot.data!.uploadPhoto(
-                                                      path: xFile!.path);
-                                                }
-                                                setState(() {
-                                                  filePhotoProfile = Image.file(
-                                                          File(xFile!.path))
-                                                      .image;
-                                                });
-                                              })),
-                                        );
-                                      },
-                                      child: Container(
-                                        height: 50.0,
-                                        width: 25.0,
-                                        decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: Colors.white),
-                                        child: Icon(
-                                          Icons.camera_alt,
-                                          color: Colors.blue,
-                                          size: 17.0,
-                                        ),
-                                      )));
+                              if (snapshot.hasData) {
+                                if (statusName == 0)
+                                  c_namaLengkap.text = snapshot.data!.getName();
+                                c_nomorHP.text = snapshot.data!.getPhone();
+
+                                return Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          // isediting dll
+                                          isEditing
+                                              ? (SizedBox(
+                                                  width: 120,
+                                                  child: TextField(
+                                                    controller: c_namaLengkap,
+                                                    decoration: InputDecoration(
+                                                      hintText: 'nama lengkap',
+                                                      isDense: true,
+                                                      enabledBorder:
+                                                          UnderlineInputBorder(
+                                                              borderSide: BorderSide(
+                                                                  color: Colors
+                                                                      .blue)),
+                                                    ),
+                                                  ),
+                                                ))
+                                              : (Text(
+                                                  c_namaLengkap.text,
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                  ),
+                                                )),
+                                          isEditing
+                                              ? Row(
+                                                  children: [
+                                                    IconButton(
+                                                        onPressed: () async {
+                                                          if (!_validateNomorHP(
+                                                              c_nomorHP.text)) {
+                                                            ScaffoldMessenger
+                                                                    .of(context)
+                                                                .showSnackBar(
+                                                                    SnackBar(
+                                                                        content:
+                                                                            Text("Nomor HP tidak valid.")));
+                                                            return;
+                                                          }
+                                                          if (c_namaLengkap
+                                                              .text.isEmpty) {
+                                                            ScaffoldMessenger
+                                                                    .of(context)
+                                                                .showSnackBar(
+                                                                    SnackBar(
+                                                                        content:
+                                                                            Text("Nama lengkap tidak boleh kosong.")));
+                                                            return;
+                                                          }
+                                                          await FireAuth.updateUser(
+                                                              displayName:
+                                                                  c_namaLengkap
+                                                                      .text,
+                                                              phoneCredential:
+                                                                  c_nomorHP
+                                                                      .text);
+                                                          ScaffoldMessenger.of(
+                                                                  context)
+                                                              .showSnackBar(SnackBar(
+                                                                  content: Text(
+                                                                      "Data berhasil diperbarui.")));
+                                                          setState(
+                                                            () {
+                                                              userCinematix =
+                                                                  FireAuth
+                                                                      .getCurrentUser();
+                                                              isEditing = false;
+                                                              statusName = 1;
+                                                            },
+                                                          );
+                                                        },
+                                                        icon: Icon(Icons.save)),
+                                                    IconButton(
+                                                        onPressed: () =>
+                                                            setState(
+                                                              () {
+                                                                userCinematix =
+                                                                    FireAuth
+                                                                        .getCurrentUser();
+                                                                isEditing =
+                                                                    false;
+                                                                statusName = 0;
+                                                              },
+                                                            ),
+                                                        icon: Icon(Icons.close))
+                                                  ],
+                                                )
+                                              : IconButton(
+                                                  onPressed: () => setState(
+                                                        () {
+                                                          isEditing = true;
+                                                        },
+                                                      ),
+                                                  icon: Icon(Icons.edit))
+                                        ],
+                                      ),
+                                      isEditing
+                                          ? SizedBox(
+                                              width: 120,
+                                              child: TextField(
+                                                controller: c_nomorHP,
+                                                decoration: InputDecoration(
+                                                  hintText: 'nomor hp',
+                                                  isDense: true,
+                                                  enabledBorder:
+                                                      UnderlineInputBorder(
+                                                          borderSide:
+                                                              BorderSide(
+                                                                  color: Colors
+                                                                      .blue)),
+                                                ),
+                                              ),
+                                            )
+                                          : Text(
+                                              c_nomorHP.text,
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                              ),
+                                            )
+                                    ]);
+                              } else {
+                                return CircularProgressIndicator();
+                              }
                             }),
-                      ],
-                    ),
-                    SizedBox(
-                      width: 40,
-                    ),
-                    // Nama & no hp
-                    FutureBuilder<UserCinematix?>(
-                        future: userCinematix,
-                        builder: (BuildContext context,
-                            AsyncSnapshot<UserCinematix?> snapshot) {
-                          return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                snapshot.hasData
-                                    ? (Text(
-                                        snapshot.data!.getName(),
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                        ),
-                                      ))
-                                    : (CircularProgressIndicator()),
-                                snapshot.hasData
-                                    ? (Text(
-                                        snapshot.data!.getPhone(),
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                        ),
-                                      ))
-                                    : (CircularProgressIndicator()),
-                              ]);
-                        }),
-                  ],
-                ),
-              ],
-            )),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              // color: Colors.blue,
-              padding: EdgeInsets.only(
-                top: 5,
-                bottom: 5,
-                left: 5,
-              ),
-              margin: EdgeInsets.symmetric(
-                vertical: 10,
-                horizontal: 8,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Favorit Saya',
-                      style: TextStyle(
-                        fontSize: 20,
-                      )),
-
-                  // SizedBox(width: 80,),
-
-                  IconButton(
-                      onPressed: () => Get.toNamed("profile/favorite"),
-                      iconSize: 30,
-                      icon: Icon(Icons.arrow_forward))
-
-//                   Icon(Icons.arrow_forward, size: 30,)
+                      ),
+                    ],
+                  ),
                 ],
-              ),
-            ),
-            Container(
-                //  color: Colors.blue,
+              )),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                // color: Colors.blue,
                 padding: EdgeInsets.only(
                   top: 5,
                   bottom: 5,
@@ -221,53 +316,84 @@ class _ProfilState extends State<Profil> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Voucher Saya',
+                    Text('Favorit Saya',
+                        style: TextStyle(
+                          fontSize: 20,
+                        )),
+
+                    // SizedBox(width: 80,),
+
+                    IconButton(
+                        onPressed: () => Get.toNamed("profile/favorite"),
+                        iconSize: 30,
+                        icon: Icon(Icons.arrow_forward))
+
+//                   Icon(Icons.arrow_forward, size: 30,)
+                  ],
+                ),
+              ),
+              Container(
+                  //  color: Colors.blue,
+                  padding: EdgeInsets.only(
+                    top: 5,
+                    bottom: 5,
+                    left: 5,
+                  ),
+                  margin: EdgeInsets.symmetric(
+                    vertical: 10,
+                    horizontal: 8,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Voucher Saya',
+                          style: TextStyle(
+                            fontSize: 20,
+                          )),
+
+                      // SizedBox(width: 80,),
+                      IconButton(
+                          onPressed: () => Get.toNamed("profile/voucher"),
+                          iconSize: 30,
+                          icon: Icon(Icons.arrow_forward))
+
+//                   Icon(Icons.arrow_forward,size: 30,)
+                    ],
+                  )),
+              Container(
+                // color: Colors.blue,
+                padding: EdgeInsets.only(
+                  top: 5,
+                  bottom: 5,
+                  left: 5,
+                ),
+                margin: EdgeInsets.symmetric(
+                  vertical: 10,
+                  horizontal: 8,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Logout',
                         style: TextStyle(
                           fontSize: 20,
                         )),
 
                     // SizedBox(width: 80,),
                     IconButton(
-                        onPressed: () => Get.toNamed("profile/voucher"),
+                        onPressed: () {},
                         iconSize: 30,
                         icon: Icon(Icons.arrow_forward))
 
-//                   Icon(Icons.arrow_forward,size: 30,)
-                  ],
-                )),
-            Container(
-              // color: Colors.blue,
-              padding: EdgeInsets.only(
-                top: 5,
-                bottom: 5,
-                left: 5,
-              ),
-              margin: EdgeInsets.symmetric(
-                vertical: 10,
-                horizontal: 8,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Logout',
-                      style: TextStyle(
-                        fontSize: 20,
-                      )),
-
-                  // SizedBox(width: 80,),
-                  IconButton(
-                      onPressed: () {},
-                      iconSize: 30,
-                      icon: Icon(Icons.arrow_forward))
-
 //                   Icon(Icons.arrow_forward, size: 30,)
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
-        )
-      ]),
-      bottomNavigationBar: const CinematixBar(),
+            ],
+          )
+        ],
+      ),
+      // bottomNavigationBar: const CinematixBar(),
     );
   }
 }
