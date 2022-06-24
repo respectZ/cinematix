@@ -1,3 +1,4 @@
+import 'package:cinematix/model/cinema.dart';
 import 'package:cinematix/model/location_provider.dart';
 import 'package:cinematix/model/user_location.dart';
 import 'package:cinematix/page/movie/movie_detail.dart';
@@ -160,9 +161,20 @@ class _CinematixHomeState extends State<CinematixHome>
                           "cinemas": cinemas!
                         });
                       },
-                      child: Row(children: const [
+                      child: Row(children: [
                         Icon(Icons.location_on),
-                        Text("CGV ROXY SQUARE JEMBER"),
+                        FutureBuilder(
+                          future:
+                              Cinema.getCinemaName(cinema_id: widget.cinemaID),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<String?> snapshot) {
+                            if (snapshot.data != null) {
+                              return Text(snapshot.data ?? "Error");
+                            } else {
+                              return Text("Error");
+                            }
+                          },
+                        ),
                       ]),
                     ),
                     TabBar(
