@@ -1,15 +1,21 @@
 import 'dart:ffi';
 import 'dart:ui';
 
+import 'package:cinematix/widget/favorite_film.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../widget/cinematix_bar.dart';
 
-class FavoritSaya extends StatelessWidget {
+class FavoritSaya extends StatefulWidget {
   const FavoritSaya({Key? key}) : super(key: key);
 
+  @override
+  State<FavoritSaya> createState() => _FavoritSayaState();
+}
+
+class _FavoritSayaState extends State<FavoritSaya> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,7 +31,16 @@ class FavoritSaya extends StatelessWidget {
         ),
         iconTheme: IconThemeData(color: Colors.blue),
         backgroundColor: Colors.white,
-        title: Text("Favorit Saya"),
+        title: Text(
+          "Favorit Saya",
+          style: TextStyle(color: Colors.blue),
+        ),
+      ),
+      body: Container(
+        margin: EdgeInsets.all(12.0),
+        child: Column(
+          children: [FavoriteFilm(movie_id: "jujutsu_kaisen_0")],
+        ),
       ),
       // body: FutureBuilder<>
       // body: StreamBuilder<QuerySnapshot<Object?>>(

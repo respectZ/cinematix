@@ -58,6 +58,16 @@ class Movie {
       start_airing: json['start_airing'] as Timestamp?,
       end_airing: json['end_airing'] as Timestamp?);
 
+  static Future<Movie> fromID({required String movie_id}) async {
+    var snapshot = (await FirebaseFirestore.instance
+        .collection("movie")
+        .doc(movie_id)
+        .get());
+    var data = snapshot.data()!;
+    data["id"] = snapshot.id;
+    return Movie.fromJSON(data);
+  }
+
   Object? getSchedule() => __schedule;
   bool isAiring() =>
       DateTime.now().isAfter(__start_airing!) &&
