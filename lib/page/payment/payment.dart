@@ -159,7 +159,8 @@ class _PaymentPageState extends State<PaymentPage> {
                                   ticket: ticket,
                                   paymentType: payments[selectedIndex]);
                             }
-                            Get.offAllNamed("/profile/ticket");
+                            Get.offAllNamed("/main");
+                            Get.toNamed("/profile/ticket");
                           },
                           child: Text("Beli Tiket"));
                     }
