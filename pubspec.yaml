@@ -52,6 +52,7 @@ dependencies:
   video_player: ^2.4.5
   youtube_player_flutter: ^8.0.0
   shared_preferences: ^2.0.15
+  flutter_launcher_icons: ^0.9.3
 
 dev_dependencies:
   flutter_test:
@@ -66,6 +67,10 @@ dev_dependencies:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/icons/play.png"
 
 # The following section is specific to Flutter.
 flutter:
