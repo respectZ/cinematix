@@ -16,6 +16,7 @@ import 'package:cinematix/page/main_menu/main_menu.dart';
 import 'package:cinematix/page/movie/movie_detail.dart';
 import 'package:cinematix/page/movie/movie_ticket.dart';
 import 'package:cinematix/page/profil/profil.dart';
+import 'package:cinematix/page/payment/payment.dart';
 
 import 'model/location_provider.dart';
 
@@ -57,6 +58,7 @@ class App extends StatelessWidget {
         GetPage(name: '/movie_detail', page: () => MovieDetailPage()),
         GetPage(name: '/movie_ticket', page: () => MovieTicketPage()),
         GetPage(name: '/cinemas', page: () => CinemaMaps()),
+        GetPage(name: '/payment', page: () => PaymentPage())
       ],
     );
   }
