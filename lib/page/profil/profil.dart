@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -381,7 +382,10 @@ class _ProfilState extends State<Profil> {
 
                     // SizedBox(width: 80,),
                     IconButton(
-                        onPressed: () {},
+                        onPressed: () async {
+                          await FirebaseAuth.instance.signOut();
+                          Get.offAndToNamed("/login");
+                        },
                         iconSize: 30,
                         icon: Icon(Icons.arrow_forward))
 
