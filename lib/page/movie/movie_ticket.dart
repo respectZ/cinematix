@@ -251,8 +251,13 @@ class _MovieTicketPageState extends State<MovieTicketPage> {
                 : ElevatedButton.styleFrom(),
             onPressed: (() async {
               // FireAuth.buyTicket(ticketId: "r25H30YzeSePWfx5jgqS");
+              var _tickets = Tickets.where((element) => selectedChair
+                  .map((e) => e.getId() == element.cinema_chair.id ? 1 : null)
+                  .isNotEmpty).toList();
               if (selectedChair.isNotEmpty) {
-                Get.toNamed("/payment");
+                Get.toNamed("/payment", arguments: {
+                  "ticket": _tickets,
+                });
               }
             }),
             child: Text("Beli Tiket"),

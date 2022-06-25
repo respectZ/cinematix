@@ -1,6 +1,18 @@
+import 'package:cinematix/model/fire_auth.dart';
 import 'package:cinematix/model/payment_type.dart';
+import 'package:cinematix/model/ticket.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+
+String _formatRupiah({required int price, bool decimal = false}) {
+  NumberFormat currencyFormatter = NumberFormat.currency(
+    locale: 'id',
+    symbol: 'Rp ',
+    decimalDigits: decimal ? 2 : 0,
+  );
+  return currencyFormatter.format(price);
+}
 
 class PaymentPage extends StatefulWidget {
   const PaymentPage({Key? key}) : super(key: key);
@@ -12,7 +24,18 @@ class PaymentPage extends StatefulWidget {
 class _PaymentPageState extends State<PaymentPage> {
   List<String> paymentType = ["DANA", "OVO"];
   int selectedIndex = -1;
+  int price = 0;
+  late List<Ticket> tickets;
   Future<List<PaymentType>> paymentTypes = PaymentType.getPayments();
+
+  @override
+  void initState() {
+    tickets = Get.arguments["ticket"];
+    for (var ticket in tickets) {
+      price += ticket.price;
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -113,17 +136,39 @@ class _PaymentPageState extends State<PaymentPage> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text("Total Pembayaran"),
-                  Text("Rp 45.000"),
+                  Text(_formatRupiah(price: price)),
                 ],
               ),
               SizedBox(
                 width: 24,
               ),
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      primary: selectedIndex == -1 ? Colors.grey : Colors.blue),
-                  onPressed: () => {},
-                  child: Text("Beli Tiket")),
+              FutureBuilder<List<PaymentType>>(
+                  future: paymentTypes,
+                  builder: (BuildContext builder,
+                      AsyncSnapshot<List<PaymentType>> snapshot) {
+                    if (snapshot.hasData) {
+                      var payments = snapshot.data!;
+                      return ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              primary: selectedIndex == -1
+                                  ? Colors.grey
+                                  : Colors.blue),
+                          onPressed: () async {
+                            for (var ticket in tickets) {
+                              await FireAuth.buyTicket(
+                                  ticket: ticket,
+                                  paymentType: payments[selectedIndex]);
+                            }
+                            Get.offAllNamed("/profile/ticket");
+                          },
+                          child: Text("Beli Tiket"));
+                    }
+                    return ElevatedButton(
+                      onPressed: () {},
+                      child: Text("Beli Tiket"),
+                      style: ElevatedButton.styleFrom(primary: Colors.grey),
+                    );
+                  }),
               SizedBox(
                 width: 12.0,
               )

@@ -1,3 +1,4 @@
+import 'package:cinematix/model/payment_type.dart';
 import 'package:cinematix/model/service/cinematix_firestore.dart';
 import 'package:cinematix/model/ticket.dart';
 import 'package:cinematix/model/user_cinematix.dart';
@@ -262,18 +263,43 @@ class FireAuth {
     return res;
   }
 
-  static Future<void> buyTicket({required String ticketId}) async {
+  static Future<void> buyTicket(
+      {required Ticket ticket, required PaymentType paymentType}) async {
     var user = await FireAuth.getCurrentUser();
+    var username = user!.getUsername();
     var querySnapshot = await FirebaseFirestore.instance
         .collection("user_ticket")
-        .doc(user!.getUsername())
+        .doc(username)
         .get();
-    // var tickets = querySnapshot.data()?["tickets"] as List<dynamic>;
+    if (!querySnapshot.exists) {
+      await FirebaseFirestore.instance
+          .collection("user_ticket")
+          .doc(username)
+          .set({"tickets": []});
+    }
+    var queryNew = await FirebaseFirestore.instance
+        .collection("user_ticket")
+        .doc(username)
+        .get();
+    var data = queryNew.data() as Map<String, dynamic>;
+    var tickets = (data["tickets"] as List<dynamic>)
+        .map((e) => e as DocumentReference)
+        .toList();
+    // insert ke user_ticket
     await FirebaseFirestore.instance
         .collection("user_ticket")
-        .doc(user.getUsername())
-        .set({
-      "tickets": [ticketId]
+        .doc(username)
+        .update({
+      "tickets": [
+        ...tickets,
+        FirebaseFirestore.instance.doc("ticket/" + ticket.id)
+      ]
+    });
+    // insert ke user_ticket_detail
+    await FirebaseFirestore.instance.collection("user_ticket_detail").add({
+      "payment_type":
+          FirebaseFirestore.instance.doc("payment_type/" + paymentType.getId()),
+      "ticket": FirebaseFirestore.instance.doc("ticket/" + ticket.id),
     });
   }
 
