@@ -39,9 +39,10 @@ Widget movieToWidget(
 
 Future<List<SearchResult>?> _searchPlaces(
     {required UserLocation userLocation}) async {
+  int radius = 3000;
   var googlePlace = GooglePlace("AIzaSyAKYtm-TjPrPM3qYwhvGtV_RtEgO8vBCHA");
   var result = await googlePlace.search.getNearBySearch(
-      Location(lat: userLocation.latitude, lng: userLocation.longitude), 1500,
+      Location(lat: userLocation.latitude, lng: userLocation.longitude), radius,
       type: "movie_theater", keyword: "bioskop");
   var cinemas = result!.results;
   return cinemas;

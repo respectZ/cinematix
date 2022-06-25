@@ -150,6 +150,16 @@ class _CinemaMapsState extends State<CinemaMaps> {
                               listCinema: cinemas,
                             ),
                           );
+                        } else if (locationProvider.status ==
+                            LocationProviderStatus.Error) {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  content: Text("Mohon nyalakan GPS anda."),
+                                );
+                              });
+                          return Text("err");
                         } else {
                           return Text("err");
                         }
