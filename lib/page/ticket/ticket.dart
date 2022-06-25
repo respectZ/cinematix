@@ -82,22 +82,34 @@ class _MyTicketPageState extends State<MyTicketPage> {
                       : Text("no date"),
                 ],
               ),
-              SizedBox(
-                height: 12,
-              ),
               // list movie
+              Column(),
               FutureBuilder(
                 future: tickets,
                 builder: (BuildContext builder,
                     AsyncSnapshot<List<Ticket>> snapshot) {
                   if (snapshot.hasData) {
                     var _tickets = snapshot.data!;
-                    for (var ticket in _tickets) {
-                      return TicketMovieWidget(
-                        ticket: ticket,
-                        dateTime: _dateTime,
-                      );
-                    }
+                    return ListView.builder(
+                        itemCount: _tickets.length,
+                        shrinkWrap: true,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Container(
+                            margin: EdgeInsets.only(bottom: 12.0),
+                            decoration: BoxDecoration(
+                              border: index != 0
+                                  ? Border(
+                                      top: BorderSide(
+                                          width: 0.5, color: Colors.black),
+                                    )
+                                  : null,
+                            ),
+                            child: TicketMovieWidget(
+                              ticket: _tickets[index],
+                              dateTime: _dateTime,
+                            ),
+                          );
+                        });
                   } else {
                     return Center(child: Text("Anda belum memiliki tiket"));
                   }
