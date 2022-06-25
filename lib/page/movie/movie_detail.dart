@@ -115,83 +115,86 @@ class _MovieDetailPageState extends State<MovieDetailPage>
                   height: 10,
                 ),
                 Row(children: [
-                  Icon(
-                    Icons.star,
-                    color: Colors.blue,
-                  ),
                   Text(
                     "Rating: ",
                     style: TextStyle(fontSize: 16),
                   ),
-                  RatingBar.builder(
-                      initialRating: _ratingBarMode,
-                      itemSize: 20,
-                      direction: Axis.horizontal,
-                      allowHalfRating: true,
-                      itemBuilder: (context, _) =>
-                          Icon(Icons.star, color: Colors.amber),
-                      onRatingUpdate: (rating) {
-                        _ratingBarMode = rating;
-                      }),
+                  isUpcoming == false
+                      ? RatingBar.builder(
+                          initialRating: _ratingBarMode,
+                          itemSize: 20,
+                          direction: Axis.horizontal,
+                          allowHalfRating: true,
+                          itemBuilder: (context, _) =>
+                              Icon(Icons.star, color: Colors.amber),
+                          onRatingUpdate: (rating) {
+                            _ratingBarMode = rating;
+                          })
+                      : Container(),
                 ]),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.create_rounded,
-                      color: Colors.blue,
-                    ),
-                    SizedBox(
-                      width: 250,
-                      child: TextField(
-                        autocorrect: false,
-                        enableSuggestions: false,
-                        controller: reviewController,
-                        decoration: InputDecoration(hintText: 'Tulis Review'),
-                      ),
-                    ),
-                    FutureBuilder(
-                        future: userCinematix,
-                        builder: (BuildContext context,
-                            AsyncSnapshot<UserCinematix?> snapshot) {
-                          return IconButton(
-                              onPressed: () async {
-                                if (reviewController.text.isNotEmpty) {
-                                  // showDialog(
-                                  //     context: context,
-                                  //     barrierDismissible: false,
-                                  //     builder: (BuildContext context) {
-                                  //       return Center(
-                                  //         child: CircularProgressIndicator(),
-                                  //       );
-                                  //     });
+                isUpcoming == false
+                    ? Row(
+                        children: [
+                          Icon(
+                            Icons.create_rounded,
+                            color: Colors.blue,
+                          ),
+                          SizedBox(
+                            width: 250,
+                            child: TextField(
+                              autocorrect: false,
+                              enableSuggestions: false,
+                              controller: reviewController,
+                              decoration:
+                                  InputDecoration(hintText: 'Tulis Review'),
+                            ),
+                          ),
+                          FutureBuilder(
+                              future: userCinematix,
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<UserCinematix?> snapshot) {
+                                return IconButton(
+                                    onPressed: () async {
+                                      if (reviewController.text.isNotEmpty) {
+                                        // showDialog(
+                                        //     context: context,
+                                        //     barrierDismissible: false,
+                                        //     builder: (BuildContext context) {
+                                        //       return Center(
+                                        //         child: CircularProgressIndicator(),
+                                        //       );
+                                        //     });
 
-                                  try {
-                                    // review
-                                    // FireAuth.addReview(
-                                    //     movie_id: movie.getID(),
-                                    //     user_email: snapshot.data!.getEmail(),
-                                    //     star_rating: _ratingBarMode,
-                                    //     comment: reviewController.text);
-                                    // reviewController.clear();
-                                    // Get.offAndToNamed("/movie/movie_detail");
-                                    movie.addReview(snapshot.data!,
-                                        _ratingBarMode, reviewController.text);
-                                    reviewController.clear();
-                                    setState(() {
-                                      list_review = movie.getReview();
-                                    });
-                                  } catch (e) {
-                                    print(e);
-                                  }
-                                }
-                              },
-                              icon: Icon(
-                                Icons.send,
-                                color: Colors.blue,
-                              ));
-                        })
-                  ],
-                ),
+                                        try {
+                                          // review
+                                          // FireAuth.addReview(
+                                          //     movie_id: movie.getID(),
+                                          //     user_email: snapshot.data!.getEmail(),
+                                          //     star_rating: _ratingBarMode,
+                                          //     comment: reviewController.text);
+                                          // reviewController.clear();
+                                          // Get.offAndToNamed("/movie/movie_detail");
+                                          movie.addReview(
+                                              snapshot.data!,
+                                              _ratingBarMode,
+                                              reviewController.text);
+                                          reviewController.clear();
+                                          setState(() {
+                                            list_review = movie.getReview();
+                                          });
+                                        } catch (e) {
+                                          print(e);
+                                        }
+                                      }
+                                    },
+                                    icon: Icon(
+                                      Icons.send,
+                                      color: Colors.blue,
+                                    ));
+                              })
+                        ],
+                      )
+                    : Container(),
                 Divider(
                   thickness: 2.0,
                 ),
