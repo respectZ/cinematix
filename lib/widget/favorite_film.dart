@@ -22,57 +22,55 @@ class _FavoriteFilmState extends State<FavoriteFilm> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: FutureBuilder(
-        future: movie,
-        builder: (context, AsyncSnapshot<Movie?> snapshot) {
-          if (snapshot.hasData) {
-            Movie _movie = snapshot.data!;
-            return Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  margin: EdgeInsets.fromLTRB(12.0, 0.0, 12.0, 0.0),
-                  height: 150,
-                  width: 100,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: NetworkImage(_movie.getImage()),
-                    ),
-                    borderRadius: BorderRadius.all(Radius.circular(15.0)),
+    return FutureBuilder(
+      future: movie,
+      builder: (context, AsyncSnapshot<Movie?> snapshot) {
+        if (snapshot.hasData) {
+          Movie _movie = snapshot.data!;
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                margin: EdgeInsets.fromLTRB(12.0, 0.0, 12.0, 0.0),
+                height: 150,
+                width: 100,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    fit: BoxFit.cover,
+                    image: NetworkImage(_movie.getImage()),
                   ),
+                  borderRadius: BorderRadius.all(Radius.circular(15.0)),
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: 12,
-                    ),
-                    Text(_movie.getTitle()),
-                    Row(
-                      children: [
-                        Text("AVG Rating: "),
-                        RatingBarIndicator(
-                          rating: _movie.getTotalRating() ?? 0,
-                          itemSize: 20.0,
-                          itemBuilder: ((context, index) => Icon(
-                                Icons.star,
-                                color: Colors.blue,
-                              )),
-                        ),
-                      ],
-                    ),
-                    Text("Kamu sudah memberikan review.")
-                  ],
-                )
-              ],
-            );
-          } else {
-            return Text("");
-          }
-        },
-      ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: 12,
+                  ),
+                  Text(_movie.getTitle()),
+                  Row(
+                    children: [
+                      Text("AVG Rating: "),
+                      RatingBarIndicator(
+                        rating: _movie.getTotalRating() ?? 0,
+                        itemSize: 20.0,
+                        itemBuilder: ((context, index) => Icon(
+                              Icons.star,
+                              color: Colors.blue,
+                            )),
+                      ),
+                    ],
+                  ),
+                  Text("Kamu sudah memberikan review.")
+                ],
+              )
+            ],
+          );
+        } else {
+          return Text("");
+        }
+      },
     );
     // return Container(
     //   child: Row(
