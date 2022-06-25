@@ -319,6 +319,9 @@ class _MovieDetailPageState extends State<MovieDetailPage>
     // need group by date
     if (schedules != null) {
       if (schedules!.isNotEmpty) {
+        // sort ?
+        schedules!.sort(
+            (a, b) => a.airing.toDate().isAfter(a.airing.toDate()) ? 0 : 1);
         for (var sch in schedules!) {
           // add yg upcoming date, bkn kelewat
           if (DateTime.now().isBefore(sch.airing.toDate())) {
