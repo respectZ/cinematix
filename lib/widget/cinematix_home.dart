@@ -20,6 +20,7 @@ Widget movieToWidget({required Movie? movie, required String cinemaID}) {
       Get.toNamed("/movie_detail", arguments: {
         "movie": movie,
         "cinemaID": cinemaID,
+        "schedules": await movie!.getSchedule(cinema_id: cinemaID),
       });
     },
     child: Container(
@@ -140,6 +141,7 @@ class _CinematixHomeState extends State<CinematixHome>
                   userCinematix = FireAuth.getCurrentUser();
                 });
               });
+              // Get.toNamed('/payment');
             },
             icon: const Icon(
               Icons.person_outline,
