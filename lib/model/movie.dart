@@ -15,6 +15,7 @@ class Movie {
   final String __rating;
   final int __happiness;
   final int __length;
+  final String __genre;
   Object? __schedule;
   DateTime? __start_airing;
   DateTime? __end_airing;
@@ -25,6 +26,7 @@ class Movie {
       required String title,
       required String director,
       required String image,
+      required String genre,
       String? pv,
       String? description,
       String? rating,
@@ -37,6 +39,7 @@ class Movie {
         __title = title,
         __director = director,
         __image = image,
+        __genre = genre,
         __pv = pv!,
         __description = description!,
         __rating = rating!,
@@ -55,6 +58,7 @@ class Movie {
       schedule: json["schedule"] as List<dynamic>?,
       director: json["director"] as String,
       image: json['image'] as String,
+      genre: json['genre'] as String,
       pv: json['pv'] as String,
       description: json['description'] as String,
       rating: json['rating'] as String,
@@ -97,6 +101,7 @@ class Movie {
   String getTitle() => __title;
   String getDirector() => __director;
   String getImage() => __image;
+  String getGenre() => __genre;
   String getPV() => __pv;
   String getDescription() => __description;
   String getRating() => __rating;

@@ -14,13 +14,15 @@ import 'package:cinematix/model/movie.dart';
 
 import 'package:get/get.dart';
 
-Widget movieToWidget({required Movie? movie, required String cinemaID}) {
+Widget movieToWidget(
+    {required Movie? movie, required String cinemaID, bool? isUpcoming}) {
   return InkWell(
     onTap: () async {
       Get.toNamed("/movie_detail", arguments: {
         "movie": movie,
         "cinemaID": cinemaID,
         "schedules": await movie!.getSchedule(cinema_id: cinemaID),
+        "isUpcoming": isUpcoming ?? false,
       });
     },
     child: Container(
@@ -219,7 +221,8 @@ class _CinematixHomeState extends State<CinematixHome>
                           alignment: Alignment.center,
                           child: movieToWidget(
                               movie: _filmList[_tabIndex][index],
-                              cinemaID: widget.cinemaID),
+                              cinemaID: widget.cinemaID,
+                              isUpcoming: _tabIndex == 1),
                           decoration: BoxDecoration(
                               color: Colors.amber,
                               borderRadius: BorderRadius.circular(15)),

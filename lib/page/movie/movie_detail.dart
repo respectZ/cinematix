@@ -300,6 +300,7 @@ class _MovieDetailPageState extends State<MovieDetailPage>
   late List<Schedule>? schedules;
   late String cinemaID;
   Map<String, List<Schedule>> groupedSchedule = {};
+  bool isUpcoming = false;
   @override
   void initState() {
     super.initState();
@@ -329,6 +330,8 @@ class _MovieDetailPageState extends State<MovieDetailPage>
         }
       }
     }
+    isUpcoming = Get.arguments["isUpcoming"];
+    if (isUpcoming) schedules = [];
 
     // need fetch from schedule
     JadwalList = List<Tab>.generate(
@@ -529,8 +532,7 @@ class _MovieDetailPageState extends State<MovieDetailPage>
                                   ),
                                   SizedBox(
                                     width: infoWidth,
-                                    child: Text(
-                                        "Action, Adventure, Fantasy, Romance"),
+                                    child: Text(movie.getGenre()),
                                   ),
                                 ],
                               ),
