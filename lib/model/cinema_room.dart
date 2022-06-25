@@ -1,23 +1,19 @@
+import 'package:cinematix/model/cinema_chair.dart';
+import 'package:cinematix/model/service/cinematix_firestore.dart';
+
 class CinemaRoom {
-  final int __id;
-  final int __cinemaId; 
-  final String __name;
- 
-  CinemaRoom (
-    {required int id,
-    required int cinemaId,
-    String? name})
-    :__id = id,
-    __cinemaId = cinemaId,
-    __name = name!;
+  final String id;
+  final String name;
+  List<CinemaChair>? chairs;
+  CinemaRoom({required this.id, required this.name});
+  factory CinemaRoom.fromJSON(Map<String, dynamic> json) =>
+      CinemaRoom(id: json["id"] as String, name: json["name"] as String);
 
-  factory CinemaRoom.fromJSON(Map<String, dynamic> json) => CinemaRoom(
-    id: json['id'] as int,
-    cinemaId: json['cinema_id'] as int,
-    name: json['name'] as String);
-
-  int getId() => __id;
-  int getCinemaId() => __cinemaId;
-  String getName() => __name;
-  
+  Future<void> intializeChairs() async {
+    var _chairs = await CinematixFirestore.findByReference(
+        collection_name: "cinema_chair",
+        reference_name: "cinema_room",
+        reference_value: id);
+    chairs = _chairs.map((e) => CinemaChair.fromJSON(e)).toList();
+  }
 }

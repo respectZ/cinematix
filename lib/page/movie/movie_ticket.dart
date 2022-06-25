@@ -1,5 +1,7 @@
 import 'dart:ffi';
 import 'package:cinematix/model/fire_auth.dart';
+import 'package:cinematix/model/schedule.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import 'package:flutter/material.dart';
@@ -66,13 +68,18 @@ Widget BuildChair(
                 width: 10,
               )));
   Column col = Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    mainAxisAlignment: MainAxisAlignment.start,
     children: List<Widget>.generate(
       colSize,
       (_) => Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: List<Widget>.generate(
           rowSize,
           (index) => SizedBox(
-            width: 10,
+            width: 40,
+            height: 40,
           ),
         ),
       ),
@@ -124,21 +131,32 @@ class MovieTicketPage extends StatefulWidget {
 
 class _MovieTicketPageState extends State<MovieTicketPage> {
   List<CinemaChair> selectedChair = [];
+  late Schedule schedule;
 
-  List<CinemaChair> Chair = List<CinemaChair>.generate(100, (index) {
-    var _tempCol = index % 10;
-    var _tempRow = index ~/ 10;
-    return CinemaChair(
-        id: index,
-        row: _tempRow,
-        column: _tempCol,
-        rightMargin: 0,
-        bottomMargin: 0,
-        code: "${String.fromCharCode(_tempRow + 65)}${_tempCol}");
-  });
+  // List<CinemaChair> Chair = List<CinemaChair>.generate(100, (index) {
+  //   var _tempCol = index % 10;
+  //   var _tempRow = index ~/ 10;
+  //   return CinemaChair(
+  //       id: index.toString(),
+  //       row: _tempRow,
+  //       column: _tempCol,
+  //       rightMargin: 0,
+  //       bottomMargin: 0,
+  //       code: "${String.fromCharCode(_tempRow + 65)}${_tempCol}");
+  // });
+  late List<CinemaChair> Chair;
   List<Ticket> Tickets = List<Ticket>.generate(100, (index) {
     return Ticket(id: index, cinemaChairId: index, price: 25000);
   });
+
+  // need to get chairs from schedule -> cinema_room
+
+  @override
+  void initState() {
+    schedule = Get.arguments["schedule"];
+    Chair = Get.arguments["cinema_chair"];
+    super.initState();
+  }
 
   @override
   void setState(VoidCallback fn) {
@@ -182,17 +200,21 @@ class _MovieTicketPageState extends State<MovieTicketPage> {
             Container(
                 margin: EdgeInsets.all(12.0),
                 height: layoutHeight,
-                child: BuildChair(
-                    chair: Chair,
-                    width: screenWidth,
-                    selectedChair: selectedChair,
-                    callback: (CinemaChair _chair) {
-                      setState(() {
-                        selectedChair.contains(_chair)
-                            ? selectedChair.remove(_chair)
-                            : selectedChair.add(_chair);
-                      });
-                    })),
+                child: Chair.isNotEmpty
+                    ? BuildChair(
+                        chair: Chair,
+                        width: screenWidth,
+                        selectedChair: selectedChair,
+                        callback: (CinemaChair _chair) {
+                          setState(() {
+                            selectedChair.contains(_chair)
+                                ? selectedChair.remove(_chair)
+                                : selectedChair.add(_chair);
+                          });
+                        })
+                    : (Center(
+                        child: Text("Tiket tidak tersedia."),
+                      ))),
             Text("_" * 15),
             SizedBox(
               height: 15,
@@ -219,11 +241,14 @@ class _MovieTicketPageState extends State<MovieTicketPage> {
       bottomNavigationBar: Container(
           height: 45,
           child: ElevatedButton(
-            style: selectedChair.length == 0
+            style: selectedChair.isEmpty
                 ? ElevatedButton.styleFrom(primary: Colors.grey)
                 : ElevatedButton.styleFrom(),
             onPressed: (() async {
-              FireAuth.buyTicket(ticketId: "r25H30YzeSePWfx5jgqS");
+              // FireAuth.buyTicket(ticketId: "r25H30YzeSePWfx5jgqS");
+              if (selectedChair.isNotEmpty) {
+                Get.toNamed("/payment");
+              }
             }),
             child: Text("Beli Tiket"),
           )),
