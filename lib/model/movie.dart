@@ -170,20 +170,6 @@ class Movie {
         mv.__totalRating = mv.__totalRating!.isNaN ? null : mv.__totalRating!;
         movies.add(mv);
       }
-      /*
-      get cinema_chair where cinema_room equal
-      get ticket where schedule = schedule, cinema_chair =cinema_chair
-      */
-      /*
-            problem: how the structure ?
-            schedule: {
-              audi #1: {
-                "airing": airing,
-                "tickets": []
-              }
-            }
-            */
-      print(movies.toString());
       return movies;
     }
   }
@@ -225,7 +211,7 @@ class Movie {
     for (var r in review) {
       var user = await ((r["user"] as DocumentReference).get());
       Map<String, dynamic> u = user.data() as Map<String, dynamic>;
-      r["user"] = u["nama"];
+      r["user"] = user.id;
       r["name"] = u["nama"];
       r["photoURL"] = u["photoURL"];
       reviews.add(Review.fromJSON(r));
