@@ -1,4 +1,5 @@
 import 'package:cinematix/model/service/cinematix_firestore.dart';
+import 'package:cinematix/model/ticket.dart';
 import 'package:cinematix/model/user_cinematix.dart';
 import 'package:cinematix/model/review.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -274,6 +275,27 @@ class FireAuth {
         .set({
       "tickets": [ticketId]
     });
+  }
+
+  static Future<List<Ticket>> getTickets() async {
+    var user = await FireAuth.getCurrentUser();
+    var username = user!.getUsername();
+    var querySnapshot = await FirebaseFirestore.instance
+        .collection("user_ticket")
+        .doc(username)
+        .get();
+    var temp = querySnapshot.data()!["tickets"] as List<dynamic>;
+
+    if (temp.isEmpty) return [];
+    var ticketsRef = temp.map((e) => e as DocumentReference).toList();
+    List<Ticket> tickets = [];
+    for (var t in ticketsRef) {
+      var _t = await t.get();
+      var __t = _t.data() as Map<String, dynamic>;
+      __t["id"] = _t.id;
+      tickets.add(Ticket.fromJSON(__t));
+    }
+    return tickets;
   }
 }
 

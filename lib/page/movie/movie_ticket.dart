@@ -145,9 +145,10 @@ class _MovieTicketPageState extends State<MovieTicketPage> {
   //       code: "${String.fromCharCode(_tempRow + 65)}${_tempCol}");
   // });
   late List<CinemaChair> Chair;
-  List<Ticket> Tickets = List<Ticket>.generate(100, (index) {
-    return Ticket(id: index, cinemaChairId: index, price: 25000);
-  });
+  // List<Ticket> Tickets = List<Ticket>.generate(100, (index) {
+  //   return Ticket(id: index, cinemaChairId: index, price: 25000);
+  // });
+  late List<Ticket> Tickets;
 
   // need to get chairs from schedule -> cinema_room
 
@@ -155,6 +156,7 @@ class _MovieTicketPageState extends State<MovieTicketPage> {
   void initState() {
     schedule = Get.arguments["schedule"];
     Chair = Get.arguments["cinema_chair"];
+    Tickets = Get.arguments["ticket"];
     super.initState();
   }
 
@@ -225,8 +227,11 @@ class _MovieTicketPageState extends State<MovieTicketPage> {
             ),
             Text(_formatRupiah(
                 price: Tickets.map((e) {
-              return selectedChair.map((e2) => e2.getId()).contains(e.getId())
-                  ? e.getPrice()
+              // temp solution, mls
+              return selectedChair
+                      .map((e2) => e2.getId())
+                      .contains(e.cinema_chair.id)
+                  ? e.price
                   : 0;
             }).toList().reduce((value, element) => value + element))),
             SizedBox(

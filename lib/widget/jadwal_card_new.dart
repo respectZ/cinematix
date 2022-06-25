@@ -2,6 +2,7 @@ import 'package:cinematix/model/cinema_chair.dart';
 import 'package:cinematix/model/cinema_room.dart';
 import 'package:cinematix/model/schedule.dart';
 import 'package:cinematix/model/service/cinematix_firestore.dart';
+import 'package:cinematix/model/ticket.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -50,6 +51,7 @@ List<Widget> _generate(List<Schedule> jadwal) {
 
                   // get chairs from wo_room where cinema_room equals
                   List<CinemaChair> finalChair = [];
+                  List<Ticket> tickets = [];
                   for (var item in tickets_wo_room) {
                     // get tickets from user_ticket, where ticket equals. if has it -> continue
                     var user_tickets = await FirebaseFirestore.instance
@@ -71,6 +73,7 @@ List<Widget> _generate(List<Schedule> jadwal) {
                     if (_chairData["cinema_room"] as DocumentReference ==
                         e.value[index].cinema_room) {
                       finalChair.add(CinemaChair.fromJSON(_chairData));
+                      tickets.add(Ticket.fromJSON(item));
                     }
                   }
 
@@ -80,7 +83,8 @@ List<Widget> _generate(List<Schedule> jadwal) {
 
                   Get.toNamed("/movie_ticket", arguments: {
                     "schedule": e.value[index],
-                    "cinema_chair": finalChair
+                    "cinema_chair": finalChair,
+                    "ticket": tickets,
                   });
                 },
                 splashColor: Colors.blue.withAlpha(30),

@@ -30,6 +30,7 @@ class _CinematixBarState extends State<CinematixBar> {
         break;
       case 2:
         setState(() => text = 'Profile');
+        Get.toNamed("/profile/ticket");
         _currentIndex = 2;
         break;
       case 3:
