@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'dart:typed_data';
+import 'package:cinematix/model/cinema.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_place/google_place.dart';
@@ -7,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:cinematix/model/location_provider.dart';
 import 'package:cinematix/model/location_services.dart';
 import 'package:cinematix/model/user_location.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'maps_screen.dart';
 
@@ -29,26 +31,37 @@ Widget _widgetListCinema(
         ? "${(distance * 1000).toInt()} m"
         : "${distance.toStringAsFixed(2)} km";
     // widget
-    Widget cinemaBox = Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(cinema.name!),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    Widget cinemaBox = InkWell(
+        onTap: () async {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString("cinema", cinema.reference!);
+          await Cinema.newCinema(
+              cinema_id: cinema.reference!,
+              name: cinema.name!,
+              lat: cinema.geometry!.location!.lat!,
+              lng: cinema.geometry!.location!.lng!);
+          Get.offAndToNamed("/main");
+        },
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              cinema.vicinity!,
-              style: TextStyle(color: Colors.grey),
+            Text(cinema.name!),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  cinema.vicinity!,
+                  style: TextStyle(color: Colors.grey),
+                ),
+                Text(distanceText),
+              ],
             ),
-            Text(distanceText),
+            SizedBox(
+              height: 20,
+            )
           ],
-        ),
-        SizedBox(
-          height: 20,
-        )
-      ],
-    );
+        ));
     column.children.add(cinemaBox);
   }
   return Container(margin: EdgeInsets.all(12.0), child: column);

@@ -35,4 +35,15 @@ class Cinema {
         .get();
     return res.data()!["name"];
   }
+
+  static Future<void> newCinema(
+      {required String cinema_id,
+      required String name,
+      required double lat,
+      required double lng}) async {
+    await FirebaseFirestore.instance
+        .collection("cinema")
+        .doc(cinema_id)
+        .set({"lang": lng, "lat": lat, "name": name});
+  }
 }

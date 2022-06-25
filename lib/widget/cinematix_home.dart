@@ -144,7 +144,6 @@ class _CinematixHomeState extends State<CinematixHome>
                   userCinematix = FireAuth.getCurrentUser();
                 });
               });
-              // Get.toNamed('/payment');
             },
             icon: const Icon(
               Icons.person_outline,
@@ -170,7 +169,7 @@ class _CinematixHomeState extends State<CinematixHome>
                         Get.toNamed("/cinemas", arguments: {
                           "locationProvider": locationProvider,
                           "cinemas": cinemas!
-                        });
+                        })?.then((value) {});
                       },
                       child: Row(children: [
                         Icon(Icons.location_on),
