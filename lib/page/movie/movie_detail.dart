@@ -8,6 +8,7 @@ import 'package:cinematix/widget/jadwal_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 import '../../widget/reviewbox.dart';
 
@@ -37,6 +38,7 @@ class _MovieDetailPageState extends State<MovieDetailPage>
   late Future<bool> isFavorite;
   late TabController _tabMainController;
   late TabController _tabJadwalController;
+  late YoutubePlayerController _youtubePlayerController;
   int _tabMainIndex = 0;
   int _tabJadwalIndex = 0;
 
@@ -292,6 +294,9 @@ class _MovieDetailPageState extends State<MovieDetailPage>
     movie = Get.arguments["movie"] as Movie;
     list_review = movie.getReview();
     isFavorite = FireAuth.isUserFavorite(movie_id: movie.getID());
+    _youtubePlayerController = YoutubePlayerController(
+        initialVideoId: YoutubePlayer.convertUrlToId(movie.getPV())!,
+        flags: YoutubePlayerFlags(autoPlay: false));
 
     _tabMainController = TabController(length: 3, vsync: this);
     _tabMainController.addListener(_tabSection);
@@ -358,7 +363,7 @@ class _MovieDetailPageState extends State<MovieDetailPage>
                   width: screenWidth,
                   height: 500,
                 ),
-                // Banner
+                // Banner / pv
                 Container(
                   height: 200,
                   width: screenWidth,
@@ -375,6 +380,10 @@ class _MovieDetailPageState extends State<MovieDetailPage>
                       bottomLeft: Radius.circular(10.0),
                       bottomRight: Radius.circular(10.0),
                     ),
+                  ),
+                  child: YoutubePlayer(
+                    controller: _youtubePlayerController,
+                    aspectRatio: screenWidth / 200,
                   ),
                 ),
                 // Thumbnail and information
