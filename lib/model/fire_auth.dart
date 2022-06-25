@@ -323,6 +323,20 @@ class FireAuth {
     }
     return tickets;
   }
+
+  static Future<bool> hasReview({required String movie_id}) async {
+    var user = await FireAuth.getCurrentUser();
+    var username = user!.getUsername();
+    var querySnapshot = await FirebaseFirestore.instance
+        .collection("review")
+        .where("user",
+            isEqualTo: FirebaseFirestore.instance.doc("user/" + username))
+        .where("movie",
+            isEqualTo: FirebaseFirestore.instance.doc("movie/" + movie_id))
+        .get();
+    var temp = querySnapshot.docs.map((e) => e.data());
+    return temp.isNotEmpty;
+  }
 }
 
 

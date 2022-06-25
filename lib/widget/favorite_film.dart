@@ -1,3 +1,4 @@
+import 'package:cinematix/model/fire_auth.dart';
 import 'package:cinematix/model/movie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -13,10 +14,12 @@ class FavoriteFilm extends StatefulWidget {
 
 class _FavoriteFilmState extends State<FavoriteFilm> {
   late Future<Movie> movie;
+  late Future<bool> hasReview;
 
   @override
   void initState() {
     movie = Movie.fromID(movie_id: widget.movie_id);
+    hasReview = FireAuth.hasReview(movie_id: widget.movie_id);
     super.initState();
   }
 
@@ -64,7 +67,16 @@ class _FavoriteFilmState extends State<FavoriteFilm> {
                           : Text("Tidak tersedia"),
                     ],
                   ),
-                  Text("Kamu sudah memberikan review.")
+                  FutureBuilder(
+                      future: hasReview,
+                      builder: (context, AsyncSnapshot<bool> snapshotR) {
+                        if (snapshotR.hasData) {
+                          return Text(snapshotR.data!
+                              ? "Kamu sudah memberikan review"
+                              : "Kamu belum memberikan review");
+                        }
+                        return Text("loading");
+                      }),
                 ],
               )
             ],
