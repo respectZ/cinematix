@@ -57,7 +57,16 @@ class _FavoritSayaState extends State<FavoritSaya> {
                         itemCount: _movie_ids.length,
                         shrinkWrap: true,
                         itemBuilder: (BuildContext context, int index) {
-                          return FavoriteFilm(movie_id: _movie_ids[index]);
+                          return Container(
+                              margin: EdgeInsets.only(bottom: 12.0),
+                              decoration: BoxDecoration(
+                                  border: index != 0
+                                      ? Border(
+                                          top: BorderSide(
+                                              width: 0.5, color: Colors.black),
+                                        )
+                                      : null),
+                              child: FavoriteFilm(movie_id: _movie_ids[index]));
                         });
                   } else {
                     return Center(

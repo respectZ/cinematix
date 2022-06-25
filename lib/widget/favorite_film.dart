@@ -31,7 +31,7 @@ class _FavoriteFilmState extends State<FavoriteFilm> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                margin: EdgeInsets.fromLTRB(12.0, 0.0, 12.0, 0.0),
+                margin: EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 0.0),
                 height: 150,
                 width: 100,
                 decoration: BoxDecoration(
@@ -52,14 +52,16 @@ class _FavoriteFilmState extends State<FavoriteFilm> {
                   Row(
                     children: [
                       Text("AVG Rating: "),
-                      RatingBarIndicator(
-                        rating: _movie.getTotalRating() ?? 0,
-                        itemSize: 20.0,
-                        itemBuilder: ((context, index) => Icon(
-                              Icons.star,
-                              color: Colors.blue,
-                            )),
-                      ),
+                      _movie.getTotalRating() != null
+                          ? RatingBarIndicator(
+                              rating: _movie.getTotalRating() ?? 0,
+                              itemSize: 20.0,
+                              itemBuilder: ((context, index) => Icon(
+                                    Icons.star,
+                                    color: Colors.blue,
+                                  )),
+                            )
+                          : Text("Tidak tersedia"),
                     ],
                   ),
                   Text("Kamu sudah memberikan review.")
