@@ -41,8 +41,8 @@ class _ReviewState extends State<ReviewBox> {
       children: [
         Row(
           children: [
-            ClipOval(
-              child: Image(width: 48, height: 48, image: _photoProfile),
+            CircleAvatar(
+              backgroundImage: _photoProfile,
             ),
             SizedBox(
               width: 10.0,

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
@@ -47,7 +48,11 @@ class UserCinematix {
     final uploadPath = "images/profile/" + getUsername() + "." + ext;
     var res = await storage.child(uploadPath).putFile(file);
     User? user = FirebaseAuth.instance.currentUser;
-    await user!.updatePhotoURL(
-        await FirebaseStorage.instance.ref(uploadPath).getDownloadURL());
+    var url = await FirebaseStorage.instance.ref(uploadPath).getDownloadURL();
+    await user!.updatePhotoURL(url);
+    await FirebaseFirestore.instance
+        .collection("user")
+        .doc(getUsername())
+        .update({"photoURL": url});
   }
 }

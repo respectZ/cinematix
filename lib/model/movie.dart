@@ -1,5 +1,8 @@
+import 'package:cinematix/model/review.dart';
 import 'package:cinematix/model/service/cinematix_firestore.dart';
+import 'package:cinematix/model/user_cinematix.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Movie {
   final String __id;
@@ -112,13 +115,14 @@ class Movie {
           reference_value: cinema_id);
       for (var movie in _movies) {
         // movieData = isi dari movie[jujustu_kaisen_0]
-        var movieData =
-            (await (movie["movie"] as DocumentReference).get()).data();
+        var movieData = (await (movie["movie"] as DocumentReference).get())
+            .data() as Map<String, dynamic>;
+        var movieID = (await (movie["movie"] as DocumentReference).get()).id;
         Movie mv = Movie.fromJSON({
-          "id": movie["id"],
+          "id": movieID,
           "start_airing": movie["start_airing"],
           "end_airing": movie["end_airing"],
-          ...(movieData as Map<String, dynamic>)
+          ...(movieData)
         });
         movies.add(mv);
       }
@@ -154,5 +158,35 @@ class Movie {
           reference_value: cinema_room["id"]);
       cc.add(chairs);
     }
+  }
+
+  Future<void> addReview(
+      UserCinematix user, double star_rating, String comment) async {
+    var username = user.getUsername();
+    var mv = getID();
+    await FirebaseFirestore.instance.collection("review").add({
+      "movie": FirebaseFirestore.instance.doc("movie/$mv"),
+      "star_rating": star_rating,
+      "comment": comment,
+      "user": FirebaseFirestore.instance.doc("user/$username")
+    });
+  }
+
+  Future<List<Review>> getReview() async {
+    var review = (await CinematixFirestore.findByReference(
+        collection_name: "review",
+        reference_name: "movie",
+        reference_value: getID()));
+    List<Review> reviews = [];
+    for (var r in review) {
+      var user = await ((r["user"] as DocumentReference).get());
+      Map<String, dynamic> u = user.data() as Map<String, dynamic>;
+      r["user"] = u["nama"];
+      r["name"] = u["nama"];
+      r["photoURL"] = u["photoURL"];
+      print(u.toString());
+      reviews.add(Review.fromJSON(r));
+    }
+    return reviews;
   }
 }

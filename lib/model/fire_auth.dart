@@ -152,11 +152,17 @@ class FireAuth {
     if (user == null) {
       return;
     }
+    var username = (await getCurrentUser())!.getUsername();
     if (displayName != null) user.updateDisplayName(displayName);
-    if (photoURL != null) user.updatePhotoURL(photoURL);
+    if (photoURL != null) {
+      user.updatePhotoURL(photoURL);
+      await FirebaseFirestore.instance
+          .collection("user")
+          .doc(username)
+          .update({"photoURL": photoURL});
+    }
     if (phoneCredential != null) {
       // await user.updatePhoneNumber(phoneCredential);
-      var username = (await getCurrentUser())!.getUsername();
       await FirebaseFirestore.instance
           .collection("user")
           .doc(username)
@@ -182,22 +188,22 @@ class FireAuth {
         .catchError((e) => print(e));
   }
 
-  static Future<List<Review?>> getReview({required String movie_id}) async {
-    List<Review> review_data = [];
-    QuerySnapshot review_by_movie_id = await FirebaseFirestore.instance
-        .collection('review')
-        .where('movie_id', isEqualTo: movie_id)
-        .get();
-    for (var i = 0; i < review_by_movie_id.docs.length; i++) {
-      Review review_one = Review(
-          movieId: review_by_movie_id.docs[i]['movie_id'],
-          userEmail: review_by_movie_id.docs[i]['user_email'],
-          starRating: review_by_movie_id.docs[i]['star_rating'].toDouble(),
-          comment: review_by_movie_id.docs[i]['comment']);
-      review_data.add(review_one);
-    }
-    return review_data;
-  }
+  // static Future<List<Review?>> getReview({required String movie_id}) async {
+  //   List<Review> review_data = [];
+  //   QuerySnapshot review_by_movie_id = await FirebaseFirestore.instance
+  //       .collection('review')
+  //       .where('movie_id', isEqualTo: movie_id)
+  //       .get();
+  //   for (var i = 0; i < review_by_movie_id.docs.length; i++) {
+  //     Review review_one = Review(
+  //         movieId: review_by_movie_id.docs[i]['movie_id'],
+  //         userEmail: review_by_movie_id.docs[i]['user_email'],
+  //         starRating: review_by_movie_id.docs[i]['star_rating'].toDouble(),
+  //         comment: review_by_movie_id.docs[i]['comment']);
+  //     review_data.add(review_one);
+  //   }
+  //   return review_data;
+  // }
 
   static Future<void> AddUserFavorite({required String movie_id}) async {
     var username = await FireAuth.getCurrentUser();

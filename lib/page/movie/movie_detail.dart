@@ -88,8 +88,8 @@ class _MovieDetailPageState extends State<MovieDetailPage>
                     SizedBox(
                       height: 10,
                     ),
-                    Text(movie.getSchedule().toString()),
-                    // Text(movie.getDescription().toString()),
+                    // Text(movie.getSchedule().toString()),
+                    Text(movie.getDescription().toString()),
                   ],
                 ),
               ),
@@ -120,7 +120,7 @@ class _MovieDetailPageState extends State<MovieDetailPage>
                     style: TextStyle(fontSize: 16),
                   ),
                   RatingBar.builder(
-                      initialRating: 4.5,
+                      initialRating: _ratingBarMode,
                       itemSize: 20,
                       direction: Axis.horizontal,
                       allowHalfRating: true,
@@ -128,7 +128,6 @@ class _MovieDetailPageState extends State<MovieDetailPage>
                           Icon(Icons.star, color: Colors.amber),
                       onRatingUpdate: (rating) {
                         _ratingBarMode = rating;
-                        print(_ratingBarMode);
                       }),
                 ]),
                 Row(
@@ -153,24 +152,30 @@ class _MovieDetailPageState extends State<MovieDetailPage>
                           return IconButton(
                               onPressed: () async {
                                 if (reviewController.text.isNotEmpty) {
-                                  showDialog(
-                                      context: context,
-                                      barrierDismissible: false,
-                                      builder: (BuildContext context) {
-                                        return Center(
-                                          child: CircularProgressIndicator(),
-                                        );
-                                      });
+                                  // showDialog(
+                                  //     context: context,
+                                  //     barrierDismissible: false,
+                                  //     builder: (BuildContext context) {
+                                  //       return Center(
+                                  //         child: CircularProgressIndicator(),
+                                  //       );
+                                  //     });
 
                                   try {
-                                    FireAuth.addReview(
-                                        movie_id: movie.getID(),
-                                        user_email: snapshot.data!.getEmail(),
-                                        star_rating: _ratingBarMode,
-                                        comment: reviewController.text);
+                                    // review
+                                    // FireAuth.addReview(
+                                    //     movie_id: movie.getID(),
+                                    //     user_email: snapshot.data!.getEmail(),
+                                    //     star_rating: _ratingBarMode,
+                                    //     comment: reviewController.text);
+                                    // reviewController.clear();
+                                    // Get.offAndToNamed("/movie/movie_detail");
+                                    movie.addReview(snapshot.data!,
+                                        _ratingBarMode, reviewController.text);
                                     reviewController.clear();
-                                    Get.offAndToNamed("/movie/movie_detail");
-                                    setState(() {});
+                                    setState(() {
+                                      list_review = movie.getReview();
+                                    });
                                   } catch (e) {
                                     print(e);
                                   }
@@ -196,17 +201,21 @@ class _MovieDetailPageState extends State<MovieDetailPage>
                           List<Review?> list_review = snapshot.data!;
                           list_rev = list_review
                               .map((e) => ReviewBox(
-                                  time: DateTime.now(),
-                                  comment: e!.getComment(),
-                                  star: e.getStarRating(),
-                                  name: e.getUserEmail()))
+                                    time: DateTime.now(),
+                                    comment: e!.getComment(),
+                                    star: e.getStarRating(),
+                                    name: e.getName(),
+                                    photoProfile: e.getPhoto(),
+                                  ))
                               .toList();
                           print(list_review[0]!.getStarRating());
                           return ListView.builder(
                               shrinkWrap: true,
                               itemCount: list_review.length,
                               itemBuilder: (context, index) {
-                                return list_rev[index];
+                                return Container(
+                                    margin: EdgeInsets.only(bottom: 12.0),
+                                    child: list_rev[index]);
                               });
                         } else
                           return Text("Belum Ada Review");
@@ -281,7 +290,7 @@ class _MovieDetailPageState extends State<MovieDetailPage>
     super.initState();
 
     movie = Get.arguments["movie"] as Movie;
-    list_review = FireAuth.getReview(movie_id: movie.getID());
+    list_review = movie.getReview();
     isFavorite = FireAuth.isUserFavorite(movie_id: movie.getID());
 
     _tabMainController = TabController(length: 3, vsync: this);
