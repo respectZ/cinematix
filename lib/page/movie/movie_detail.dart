@@ -2,9 +2,11 @@ import 'dart:ffi';
 
 import 'package:cinematix/model/fire_auth.dart';
 import 'package:cinematix/model/review.dart';
+import 'package:cinematix/model/schedule.dart';
 import 'package:cinematix/model/user_cinematix.dart';
 import 'package:cinematix/page/movie/movie_ticket.dart';
 import 'package:cinematix/widget/jadwal_card.dart';
+import 'package:cinematix/widget/jadwal_card_new.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
@@ -232,19 +234,35 @@ class _MovieDetailPageState extends State<MovieDetailPage>
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            margin: EdgeInsets.fromLTRB(12.0, 0.0, 0.0, 0.0),
-            child: TabBar(
-                controller: _tabJadwalController,
-                isScrollable: true,
-                labelColor: Colors.blue,
-                tabs: [
-                  Tab(
-                    text: "11 Juni\nSabtu",
-                  )
-                ]),
-          ),
-          _tabJadwalContent()[_tabJadwalIndex],
+          if (_tabJadwalController.length != 0)
+            Container(
+                margin: EdgeInsets.fromLTRB(12.0, 0.0, 0.0, 0.0),
+                child: TabBar(
+                    controller: _tabJadwalController,
+                    isScrollable: true,
+                    labelColor: Colors.blue,
+                    // tabs: List<Widget>.generate(_tabJadwalController.length,
+                    //     (index) {
+                    //   return Tab(
+                    //     // text: schedules![index]["airing"].toString(),
+                    //     // text: schedules![index].getDate(),
+                    //     text: groupedSchedule[index]!.getDate(),
+                    //   );
+                    // }),
+                    tabs: groupedSchedule.entries.map((entry) {
+                      return Tab(
+                        text: entry.value[0].getDate(),
+                      );
+                    }).toList()))
+          else
+            Container(),
+          if (_tabJadwalController.length != 0)
+            _tabJadwalContent()[_tabJadwalIndex]
+          else
+            Center(
+                child: Container(
+                    margin: EdgeInsets.only(top: 12.0),
+                    child: (Text("Jadwal belum tersedia.")))),
         ],
       ),
       // Column(
@@ -272,26 +290,22 @@ class _MovieDetailPageState extends State<MovieDetailPage>
   }
 
   List<Widget> _tabJadwalContent() {
-    return List<Widget>.generate(
-        _tabJadwalController.length,
-        (_) => Column(
-              children: List<Widget>.generate(
-                1,
-                (index) => JadwalBox(
-                  NamaRuangan: "Audi ${index + 1}",
-                  ListWaktu:
-                      List<DateTime>.generate(1, (index2) => DateTime.now()),
-                  callback: () => Get.toNamed("/movie_ticket"),
-                ),
-              ),
-            ));
+    return groupedSchedule.entries.map((e) {
+      return JadwalBoxNew(
+        jadwal: e.value,
+      );
+    }).toList();
   }
 
+  late List<Schedule>? schedules;
+  late String cinemaID;
+  Map<String, List<Schedule>> groupedSchedule = {};
   @override
   void initState() {
     super.initState();
 
     movie = Get.arguments["movie"] as Movie;
+    cinemaID = Get.arguments["cinemaID"];
     list_review = movie.getReview();
     isFavorite = FireAuth.isUserFavorite(movie_id: movie.getID());
     _youtubePlayerController = YoutubePlayerController(
@@ -300,14 +314,32 @@ class _MovieDetailPageState extends State<MovieDetailPage>
 
     _tabMainController = TabController(length: 3, vsync: this);
     _tabMainController.addListener(_tabSection);
+    schedules = Get.arguments["schedules"];
+    // need group by date
+    if (schedules != null) {
+      if (schedules!.isNotEmpty) {
+        for (var sch in schedules!) {
+          // add yg upcoming date, bkn kelewat
+          if (DateTime.now().isBefore(sch.airing.toDate())) {
+            if (groupedSchedule[sch.getDateGroup()] == null) {
+              groupedSchedule[sch.getDateGroup()] = [];
+            }
+            groupedSchedule[sch.getDateGroup()]!.add(sch);
+          }
+        }
+      }
+    }
 
     // need fetch from schedule
     JadwalList = List<Tab>.generate(
         7, (index) => Tab(text: "${index + 10} Maret\nSelasa"));
 
+    // _tabJadwalController = TabController(length: 0, vsync: this);
     // _tabJadwalController =
-    //     TabController(length: movie.getSchedule()!.length, vsync: this);
-    _tabJadwalController = TabController(length: 1, vsync: this);
+    //     TabController(length: schedules!.length, vsync: this);
+    _tabJadwalController =
+        TabController(length: groupedSchedule.length, vsync: this);
+
     _tabJadwalController.addListener(_tabSection);
   }
 

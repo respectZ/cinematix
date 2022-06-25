@@ -1,4 +1,5 @@
 import 'package:cinematix/model/review.dart';
+import 'package:cinematix/model/schedule.dart';
 import 'package:cinematix/model/service/cinematix_firestore.dart';
 import 'package:cinematix/model/user_cinematix.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -81,10 +82,11 @@ class Movie {
       total += review["star_rating"] as double;
     }
     movie.__totalRating = total / reviews.length;
+    movie.__totalRating =
+        movie.__totalRating!.isNaN ? null : movie.__totalRating!;
     return movie;
   }
 
-  Object? getSchedule() => __schedule;
   bool isAiring() =>
       DateTime.now().isAfter(__start_airing!) &&
       DateTime.now().isBefore(__end_airing!);
@@ -160,6 +162,7 @@ class Movie {
           total += review["star_rating"] as double;
         }
         mv.__totalRating = total / reviews.length;
+        mv.__totalRating = mv.__totalRating!.isNaN ? null : mv.__totalRating!;
         movies.add(mv);
       }
       /*
@@ -223,5 +226,31 @@ class Movie {
       reviews.add(Review.fromJSON(r));
     }
     return reviews;
+  }
+
+  Future<List<Schedule>> getSchedule({required String cinema_id}) async {
+    // get from cinema_movie, trus find yg match cinema & movie
+    var cinema_movie = await CinematixFirestore.findByReference(
+        collection_name: "cinema_movie",
+        reference_name: "cinema",
+        reference_value: cinema_id);
+    String cinema_movieEqID = "";
+    for (var cm in cinema_movie) {
+      var temp_movie = await (cm["movie"] as DocumentReference).get();
+      if (temp_movie.id == getID()) {
+        cinema_movieEqID = cm["id"];
+        break;
+      }
+    }
+    var schedules = await CinematixFirestore.findByReference(
+        collection_name: "schedule",
+        reference_name: "cinema_movie",
+        reference_value: cinema_movieEqID);
+    var result = schedules.map((e) => Schedule.fromJSON(e)).toList();
+    for (var i = 0; i < result.length; i++) {
+      var cinema_r = (await result[i].getRoom()).data() as Map<String, dynamic>;
+      result[i].cinema_room_name = cinema_r["name"];
+    }
+    return result;
   }
 }

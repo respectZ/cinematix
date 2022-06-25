@@ -11,8 +11,14 @@ class MainMenu extends StatefulWidget {
 }
 
 class _MainMenuState extends State<MainMenu> {
-  Future<List<Movie>> movies =
-      Movie.getMovies(cinema_id: "ChIJJ3jvqetXeC4R7W8Ltg_dgdA");
+  String cinema_id = "ChIJJ3jvqetXeC4R7W8Ltg_dgdA";
+  late Future<List<Movie>> movies;
+
+  @override
+  void initState() {
+    movies = Movie.getMovies(cinema_id: cinema_id);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +37,7 @@ class _MainMenuState extends State<MainMenu> {
                 return CinematixHome(
                     onGoing: movies_ongoing,
                     upComing: movies_upcoming,
-                    cinemaID: "ChIJJ3jvqetXeC4R7W8Ltg_dgdA");
+                    cinemaID: cinema_id);
               } else {
                 return Container();
               }
