@@ -149,6 +149,17 @@ class Movie {
           "end_airing": movie["end_airing"],
           ...(movieData)
         });
+
+        // get total rating
+        var reviews = await CinematixFirestore.findByReference(
+            collection_name: "review",
+            reference_name: "movie",
+            reference_value: movieID);
+        var total = 0.0;
+        for (var review in reviews) {
+          total += review["star_rating"] as double;
+        }
+        mv.__totalRating = total / reviews.length;
         movies.add(mv);
       }
       /*

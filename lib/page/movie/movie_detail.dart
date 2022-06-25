@@ -502,6 +502,34 @@ class _MovieDetailPageState extends State<MovieDetailPage>
                                   ),
                                 ],
                               ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Score",
+                                    style: TitleStyle,
+                                  ),
+                                  SizedBox(
+                                    width: 53,
+                                  ),
+                                  SizedBox(
+                                      width: infoWidth,
+                                      child: movie.getTotalRating() != null
+                                          ? RatingBarIndicator(
+                                              rating: movie.getTotalRating()!,
+                                              itemSize: 20.0,
+                                              itemBuilder: ((context, index) =>
+                                                  Icon(
+                                                    Icons.star,
+                                                    color: Colors.blue,
+                                                  )),
+                                            )
+                                          : (Text("Belum tersedia"))),
+                                ],
+                              ),
                             ],
                           ),
                         ],
