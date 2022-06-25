@@ -32,6 +32,7 @@ class _PaymentPageState extends State<PaymentPage> {
   void initState() {
     tickets = Get.arguments["ticket"];
     for (var ticket in tickets) {
+      print(ticket.toString());
       price += ticket.price;
     }
     super.initState();

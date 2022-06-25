@@ -226,14 +226,16 @@ class _MovieTicketPageState extends State<MovieTicketPage> {
               height: 15,
             ),
             Text(_formatRupiah(
-                price: Tickets.map((e) {
-              // temp solution, mls
-              return selectedChair
-                      .map((e2) => e2.getId())
-                      .contains(e.cinema_chair.id)
-                  ? e.price
-                  : 0;
-            }).toList().reduce((value, element) => value + element))),
+                price: Chair.isNotEmpty
+                    ? Tickets.map((e) {
+                        // temp solution, mls
+                        return selectedChair
+                                .map((e2) => e2.getId())
+                                .contains(e.cinema_chair.id)
+                            ? e.price
+                            : 0;
+                      }).toList().reduce((value, element) => value + element)
+                    : (0))),
             SizedBox(
               height: 15,
             ),
@@ -251,9 +253,18 @@ class _MovieTicketPageState extends State<MovieTicketPage> {
                 : ElevatedButton.styleFrom(),
             onPressed: (() async {
               // FireAuth.buyTicket(ticketId: "r25H30YzeSePWfx5jgqS");
-              var _tickets = Tickets.where((element) => selectedChair
-                  .map((e) => e.getId() == element.cinema_chair.id ? 1 : null)
-                  .isNotEmpty).toList();
+              // var _tickets = Tickets.where((element) => selectedChair
+              //     .map((e) => e.getId() == element.cinema_chair.id ? 1 : null)
+              //     .isNotEmpty).toList();
+              List<Ticket> _tickets = [];
+              for (var t in Tickets) {
+                for (var c in selectedChair) {
+                  if (c.getId() == t.cinema_chair.id) {
+                    _tickets.add(t);
+                    break;
+                  }
+                }
+              }
               if (selectedChair.isNotEmpty) {
                 Get.toNamed("/payment", arguments: {
                   "ticket": _tickets,
