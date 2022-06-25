@@ -17,6 +17,7 @@ class Movie {
   Object? __schedule;
   DateTime? __start_airing;
   DateTime? __end_airing;
+  double? __totalRating;
 
   Movie(
       {required String id,
@@ -68,7 +69,19 @@ class Movie {
         .get());
     var data = snapshot.data()!;
     data["id"] = snapshot.id;
-    return Movie.fromJSON(data);
+    Movie movie = Movie.fromJSON(data);
+
+    // get total rating
+    var reviews = await CinematixFirestore.findByReference(
+        collection_name: "review",
+        reference_name: "movie",
+        reference_value: movie_id);
+    var total = 0.0;
+    for (var review in reviews) {
+      total += review["star_rating"] as double;
+    }
+    movie.__totalRating = total / reviews.length;
+    return movie;
   }
 
   Object? getSchedule() => __schedule;
@@ -89,6 +102,18 @@ class Movie {
   int getlength() => __length;
   DateTime? getStartAiring() => __start_airing;
   DateTime? getEndAiring() => __end_airing;
+  double? getTotalRating() => __totalRating;
+  Future<double> getTotalReview() async {
+    var reviews = await CinematixFirestore.findByReference(
+        collection_name: "review",
+        reference_name: "movie",
+        reference_value: getID());
+    var total = 0.0;
+    for (var review in reviews) {
+      total += review["star_rating"] as double;
+    }
+    return total / reviews.length;
+  }
 
   static Future<List<Movie>> getMovies({String? cinema_id}) async {
     if (cinema_id == null) {
@@ -184,7 +209,6 @@ class Movie {
       r["user"] = u["nama"];
       r["name"] = u["nama"];
       r["photoURL"] = u["photoURL"];
-      print(u.toString());
       reviews.add(Review.fromJSON(r));
     }
     return reviews;

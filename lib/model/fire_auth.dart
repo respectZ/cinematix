@@ -205,18 +205,6 @@ class FireAuth {
   //   return review_data;
   // }
 
-  static Future<void> AddUserFavorite({required String movie_id}) async {
-    var username = await FireAuth.getCurrentUser();
-    await FirebaseFirestore.instance
-        .collection('user_favorite')
-        .add({'username': username!.getUsername(), 'movie': movie_id});
-  }
-
-  static Future<void> DeleteUserFavorite(
-      {String? username, int? movie_id}) async {
-    // to do
-  }
-
   static Future<bool> toggleUserFavorite({required String movie_id}) async {
     var username = (await getCurrentUser())!.getUsername();
     var favorites =
@@ -255,9 +243,22 @@ class FireAuth {
       }
       return false;
     }
-    // bikin doc baru
+  }
 
-    // get, append movie ke array list
+  static Future<List<String>?> getUserFavorites() async {
+    var username = (await getCurrentUser())!.getUsername();
+    // cek dulu kalo di document udh punya / blm
+    var favorites =
+        await FirebaseFirestore.instance.collection("user").doc(username).get();
+    var movie_ids = favorites.data()!["favorites"] as List<dynamic>?;
+    if (movie_ids == null) return null;
+    var res = movie_ids.map((e) {
+      var r = e.toString().split("/")[e.toString().split("/").length - 1];
+      r = r.substring(0, r.length - 1);
+      return r;
+    }).toList();
+    print(res.toString());
+    return res;
   }
 
   static Future<void> buyTicket({required String ticketId}) async {

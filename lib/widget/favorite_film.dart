@@ -50,13 +50,18 @@ class _FavoriteFilmState extends State<FavoriteFilm> {
                       height: 12,
                     ),
                     Text(_movie.getTitle()),
-                    RatingBarIndicator(
-                      rating: 5,
-                      itemSize: 20.0,
-                      itemBuilder: ((context, index) => Icon(
-                            Icons.star,
-                            color: Colors.blue,
-                          )),
+                    Row(
+                      children: [
+                        Text("AVG Rating: "),
+                        RatingBarIndicator(
+                          rating: _movie.getTotalRating() ?? 0,
+                          itemSize: 20.0,
+                          itemBuilder: ((context, index) => Icon(
+                                Icons.star,
+                                color: Colors.blue,
+                              )),
+                        ),
+                      ],
                     ),
                     Text("Kamu sudah memberikan review.")
                   ],

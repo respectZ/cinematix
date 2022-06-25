@@ -1,6 +1,7 @@
 import 'dart:ffi';
 import 'dart:ui';
 
+import 'package:cinematix/model/fire_auth.dart';
 import 'package:cinematix/widget/favorite_film.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +17,7 @@ class FavoritSaya extends StatefulWidget {
 }
 
 class _FavoritSayaState extends State<FavoritSaya> {
+  Future<List<String>?> movie_ids = FireAuth.getUserFavorites();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,7 +41,31 @@ class _FavoritSayaState extends State<FavoritSaya> {
       body: Container(
         margin: EdgeInsets.all(12.0),
         child: Column(
-          children: [FavoriteFilm(movie_id: "jujutsu_kaisen_0")],
+          children: [
+            FutureBuilder(
+                future: movie_ids,
+                builder: (BuildContext builder,
+                    AsyncSnapshot<List<String>?> snapshot) {
+                  if (snapshot.hasData) {
+                    var _movie_ids = snapshot.data!;
+                    if (_movie_ids.isEmpty) {
+                      return Center(
+                        child: Text("Kamu belum memiliki film favorit."),
+                      );
+                    }
+                    return ListView.builder(
+                        itemCount: _movie_ids.length,
+                        shrinkWrap: true,
+                        itemBuilder: (BuildContext context, int index) {
+                          return FavoriteFilm(movie_id: _movie_ids[index]);
+                        });
+                  } else {
+                    return Center(
+                      child: Text("Kamu belum memiliki film favorit."),
+                    );
+                  }
+                })
+          ],
         ),
       ),
       // body: FutureBuilder<>
