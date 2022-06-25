@@ -14,6 +14,7 @@ class MyTicketPage extends StatefulWidget {
 class _MyTicketPageState extends State<MyTicketPage> {
   Future<List<Ticket>> tickets = FireAuth.getTickets();
   DateTime? _dateTime = DateTime.now();
+  bool isFiltered = false;
 
   @override
   Widget build(BuildContext context) {
@@ -46,27 +47,35 @@ class _MyTicketPageState extends State<MyTicketPage> {
                   SizedBox(
                     width: 12.0,
                   ),
+                  Checkbox(
+                      value: isFiltered,
+                      onChanged: (bool? val) {
+                        setState(() {
+                          isFiltered = val ?? isFiltered;
+                        });
+                      }),
+                  SizedBox(
+                    width: 12.0,
+                  ),
                   Text("Filter tanggal"),
                   SizedBox(
                     width: 24.0,
                   ),
-                  IconButton(
-                      onPressed: () {
-                        showDatePicker(
-                                context: context,
-                                initialDate: _dateTime!,
-                                firstDate: DateTime(2022),
-                                lastDate: DateTime(2099))
-                            .then((value) => setState(() {
-                                  _dateTime = value;
-                                }));
+                  if (_dateTime != null)
+                    InkWell(
+                      onTap: () {
+                        if (!isFiltered) {
+                          showDatePicker(
+                                  context: context,
+                                  initialDate: _dateTime!,
+                                  firstDate: DateTime(2022),
+                                  lastDate: DateTime(2099))
+                              .then((value) => setState(() {
+                                    _dateTime = value ?? _dateTime;
+                                  }));
+                        }
                       },
-                      icon: Icon(Icons.date_range)),
-                  SizedBox(
-                    width: 12.0,
-                  ),
-                  _dateTime != null
-                      ? Container(
+                      child: Container(
                           width: 128,
                           height: 32,
                           decoration: BoxDecoration(
@@ -78,8 +87,10 @@ class _MyTicketPageState extends State<MyTicketPage> {
                               _dateTime.toString().split(" ")[0],
                               style: TextStyle(color: Colors.white),
                             ),
-                          ))
-                      : Text("no date"),
+                          )),
+                    )
+                  else
+                    Text("no date"),
                 ],
               ),
               // list movie
@@ -106,7 +117,7 @@ class _MyTicketPageState extends State<MyTicketPage> {
                             ),
                             child: TicketMovieWidget(
                               ticket: _tickets[index],
-                              dateTime: _dateTime,
+                              dateTime: isFiltered ? _dateTime : null,
                             ),
                           );
                         });
